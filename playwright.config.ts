@@ -7,12 +7,15 @@ export default defineConfig({
   fullyParallel: true,
   retries: process.env.CI ? 1 : 0,
   testIdAttribute: 'data-qa',
-  reporter: [['list', { printSteps: true }]],
+  reporter: [
+    ['list', { printSteps: true }],
+    ['./lib/video-reporter.ts', { outputDir: 'test-results/video-meta' }],
+  ],
   use: {
     baseURL: 'https://www.automationexercise.com',
     trace: 'off',
     screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    video: process.env.LIBRARY_RUN ? 'on' : 'retain-on-failure',
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },

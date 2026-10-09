@@ -131,6 +131,22 @@ Two workflows to avoid slowing normal PRs:
 
 Needs `GH_TOKEN` with Copilot access + Copilot CLI on runner, and AWS OIDC role (no long-lived keys).
 
+### c) Future extraction: reusable workflow for other repos
+
+Demo builds everything repo-local for speed. For org rollout, extract without forking logic:
+
+- Package: `lib/video-reporter.ts` + `scripts/build-manifest.js` become `@company/playwright-video-library` (or copy-paste unit). Rules: no spec names, no bucket, no Slack inside — config via reporter options / CLI args / env only. `manifest.json` schema versioned (`v: 1`).
+- Central repo: `company/e2e-video-library` with `.github/workflows/capture.yml` (`on: workflow_call`, inputs: `tests-path`, `bucket`, `role-to-assume`, `viewer-origin`). It checks out caller, runs Playwright with the packaged reporter, syncs to S3, posts Slack.
+- Consumer repo then needs ~10 lines:
+  ```yaml
+  jobs:
+    library:
+      uses: company/e2e-video-library/.github/workflows/capture.yml@main
+      with: { tests-path: 'tests/**', bucket: 'e2e-library-prod' }
+      secrets: inherit
+  ```
+- Tradeoffs: one place to maintain vs versioning + OIDC trust per caller repo + harder local debug. Decision: stay repo-local for hackathon, extract on second adopter.
+
 ## 6. AWS S3 + Page Design (real bucket)
 
 - Bucket: `e2e-demo-library-<team>`, private, versioning off
@@ -227,9 +243,9 @@ Future: Slack slash command `/howto checkout` -> search manifest -> return video
 
 ## 11. Next Steps
 
-- [ ] scaffold npm + playwright in this folder
-- [ ] write 3 specs with test.step discipline
-- [ ] implement video-reporter.ts + build-manifest.js
+- [x] scaffold npm + playwright in this folder
+- [x] write specs with test.step discipline (register done, login-cart + checkout to re-add later)
+- [x] implement video-reporter.ts + build-manifest.js
 - [ ] build viewer/index.html
 - [ ] create S3 bucket + OIDC role, add secrets
 - [ ] add video-library.yml + Slack webhook

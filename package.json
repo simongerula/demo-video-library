@@ -6,7 +6,9 @@
   "scripts": {
     "test": "playwright test",
     "test:headed": "playwright test --headed",
-    "test:ui": "playwright test --ui"
+    "test:ui": "playwright test --ui",
+    "test:library": "LIBRARY_RUN=1 playwright test",
+    "build:manifest": "node scripts/build-manifest.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",

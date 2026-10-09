@@ -1,0 +1,25 @@
+[
+  {
+    "v": 1,
+    "id": "register-register-new-user",
+    "title": "Register new user",
+    "file": "tests/auth/register.spec.ts",
+    "video": "videos/register-register-new-user.webm",
+    "status": "passed",
+    "durationMs": 10778,
+    "steps": [
+      "Open home page",
+      "Go to Signup / Login",
+      "Start signup with name and email",
+      "Fill account information",
+      "Fill address information",
+      "Verify account created and logged in",
+      "Delete account to clean up"
+    ],
+    "summary": null,
+    "tags": [],
+    "updatedAt": "2026-10-09T01:16:42.426Z",
+    "commit": null,
+    "runUrl": null
+  }
+]
