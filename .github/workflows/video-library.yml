@@ -51,6 +51,13 @@ jobs:
       - name: Build manifest
         run: pnpm run build:manifest
 
+      # TEMPORARY DEBUG: decode OIDC claims to fix trust mismatch. Remove after.
+      - name: Debug OIDC claims (temporary)
+        run: |
+          resp=$(curl -s -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com")
+          token=$(echo "$resp" | python3 -c "import sys,json; print(json.load(sys.stdin)['value'])")
+          echo "$token" | cut -d. -f2 | python3 -c "import sys,base64,json; s=sys.stdin.read().strip(); s+='='*(-len(s)%4); d=json.loads(base64.urlsafe_b64decode(s)); print(json.dumps({k:d.get(k) for k in ('iss','aud','sub')}, indent=2))"
+
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
