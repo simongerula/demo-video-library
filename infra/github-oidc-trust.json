@@ -11,9 +11,9 @@
         "StringEquals": {
           "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
         },
-        "StringLike": {
-          "token.actions.githubusercontent.com:sub": "repo:simongerula/demo-video-library:*"
-        }
+            "StringLike": {
+              "token.actions.githubusercontent.com:sub": "repo:simongerula@52640978/demo-video-library@1411117042:*"
+            }
       }
     }
   ]

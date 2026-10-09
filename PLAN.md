@@ -146,6 +146,7 @@ Demo builds everything repo-local for speed. For org rollout, extract without fo
       secrets: inherit
   ```
 - Tradeoffs: one place to maintain vs versioning + OIDC trust per caller repo + harder local debug. Decision: stay repo-local for hackathon, extract on second adopter.
+- OIDC gotcha (hit 2026-10-09, keep for rollout): GitHub's OIDC `sub` now embeds numeric IDs — `repo:{owner}@{ownerId}/{repo}@{repoId}:ref:refs/heads/<branch>` (e.g. `repo:simongerula@52640978/demo-video-library@1411117042:ref:refs/heads/master`). Old tutorials showing `repo:OWNER/REPO:*` will fail with `Not authorized to perform sts:AssumeRoleWithWebIdentity`. For each consumer repo: add a temporary claims-debug step (decode the JWT `sub`), paste the exact IDs into the role trust, and use a branch-wildcard (`...@repoId:*`) unless you want branch-pinning. Also: no `_comment` keys inside IAM `Condition` blocks (IAM rejects them), and workflow-file-only pushes don't match `paths: tests/**` — use `workflow_dispatch` to test.
 
 ## 6. AWS S3 + Page Design (real bucket)
 
