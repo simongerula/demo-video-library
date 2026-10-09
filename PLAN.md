@@ -149,7 +149,7 @@ Demo builds everything repo-local for speed. For org rollout, extract without fo
 
 ## 6. AWS S3 + Page Design (real bucket)
 
-- Bucket: `e2e-demo-library-<team>`, private, versioning off
+- Bucket: `demo-video-library-simongerula` (`ap-southeast-2`), private, versioning off
 - Layout:
   - `s3://bucket/videos/<spec-name>/<short-sha>.webm`
   - `s3://bucket/manifest.json`
@@ -161,7 +161,7 @@ Demo builds everything repo-local for speed. For org rollout, extract without fo
   - uses: aws-actions/configure-aws-credentials@v4
     with:
       role-to-assume: arn:aws:iam::ACCOUNT:role/e2e-video-uploader
-      aws-region: eu-west-1
+      aws-region: ap-southeast-2
   ```
 - Cost: cents for demo. Main cost driver is storage + CloudFront egress.
 

@@ -1,0 +1,62 @@
+name: video-library
+
+# Re-runs changed e2e specs with video recording and publishes to S3.
+# Normal PR checks stay in e2e.yml (if present); this workflow only runs
+# when tests change on the default branch.
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - 'tests/**'
+      - 'playwright.config.ts'
+      - 'lib/video-reporter.ts'
+      - 'scripts/build-manifest.js'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  BUCKET: demo-video-library-simongerula
+  AWS_REGION: ap-southeast-2
+
+jobs:
+  capture-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm exec playwright install chromium --with-deps
+
+      - name: Run library capture (video on)
+        run: pnpm run test:library
+        env:
+          CI: true
+
+      - name: Build manifest
+        run: pnpm run build:manifest
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Sync library to S3
+        run: |
+          aws s3 sync library/ "s3://$BUCKET/library/" --delete
+          aws s3 sync viewer/ "s3://$BUCKET/viewer/" --delete

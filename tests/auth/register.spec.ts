@@ -6,7 +6,7 @@ test('Register new user', async ({ page }) => {
   const email = `demo${timestamp}@example.com`;
   const password = 'Test1234!';
 
-  await test.step('Open home page', async () => {
+  await test.step('Open home page and confirm store loads', async () => {
     await page.goto('/');
     await expect(page.locator('header a:has-text("Home")').first()).toBeVisible();
   });
