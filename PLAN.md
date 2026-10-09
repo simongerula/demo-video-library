@@ -151,10 +151,11 @@ Demo builds everything repo-local for speed. For org rollout, extract without fo
 ## 6. AWS S3 + Page Design (real bucket)
 
 - Bucket: `demo-video-library-simongerula` (`ap-southeast-2`), private, versioning off
-- Layout:
-  - `s3://bucket/videos/<spec-name>/<short-sha>.webm`
-  - `s3://bucket/manifest.json`
-  - `s3://bucket/index.html` (same bucket or separate static site bucket)
+- Layout (implemented; `library/` + `viewer/` are siblings at bucket root):
+  - `s3://bucket/library/manifest.json`
+  - `s3://bucket/library/videos/<test-id>.webm` (stable name per flow, overwritten on re-run)
+  - `s3://bucket/viewer/index.html` (fetches `../library/manifest.json`, so relative paths hold locally and on S3)
+  - No `viewer/library/` prefix — delete if created by a manual upload; workflow `--delete` syncs only clean their exact mappings.
 - Hosting: S3 static hosting for demo, CloudFront + OAC for real proposal
 - Lifecycle rule: delete `videos/*` older than 90d, keep `manifest.json` history
 - Auth in CI: OIDC
