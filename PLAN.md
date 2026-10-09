@@ -246,7 +246,7 @@ Future: Slack slash command `/howto checkout` -> search manifest -> return video
 - [x] scaffold npm + playwright in this folder
 - [x] write specs with test.step discipline (register done, login-cart + checkout to re-add later)
 - [x] implement video-reporter.ts + build-manifest.js
-- [ ] build viewer/index.html
+- [x] build viewer/index.html
 - [ ] create S3 bucket + OIDC role, add secrets
 - [ ] add video-library.yml + Slack webhook
 - [ ] add summarize-with-copilot.js

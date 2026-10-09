@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>E2E Video Library</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; background: #f6f6f6; color: #222; }
+    header { background: #111; color: #fff; padding: 16px 24px; position: sticky; top: 0; }
+    header h1 { margin: 0 0 8px; font-size: 20px; }
+    #q { width: 100%; max-width: 480px; padding: 8px 12px; font-size: 15px; border-radius: 6px; border: 1px solid #ccc; }
+    #count { margin-top: 8px; font-size: 13px; color: #bbb; }
+    main { padding: 24px; display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); }
+    article { background: #fff; border-radius: 10px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+    article h2 { margin: 0 0 8px; font-size: 17px; }
+    video { width: 100%; border-radius: 6px; background: #000; }
+    .no-video { padding: 24px; text-align: center; background: #eee; border-radius: 6px; color: #666; }
+    ol { padding-left: 20px; margin: 12px 0; font-size: 14px; }
+    footer { font-size: 12px; color: #666; }
+    .error { padding: 24px; color: #900; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>E2E Video Library</h1>
+    <input id="q" type="search" placeholder="Search flows… e.g. register" autocomplete="off" />
+    <div id="count"></div>
+  </header>
+  <main id="list"></main>
+
+  <script>
+    const list = document.getElementById('list');
+    const q = document.getElementById('q');
+    const count = document.getElementById('count');
+    let entries = [];
+
+    function searchable(e) {
+      return [e.title, (e.steps || []).join(' '), e.summary || '', (e.tags || []).join(' ')]
+        .join(' ').toLowerCase();
+    }
+
+    function render(filter = '') {
+      const f = filter.trim().toLowerCase();
+      const shown = f ? entries.filter((e) => searchable(e).includes(f)) : entries;
+      count.textContent = `${shown.length} of ${entries.length} flows`;
+      list.innerHTML = shown.map((e) => `
+        <article>
+          <h2>${escapeHtml(e.title)}</h2>
+          ${e.video
+            ? `<video controls preload="metadata" src="../${escapeAttr(e.video)}"></video>`
+            : `<div class="no-video">No video recorded yet</div>`}
+          <ol>${(e.steps || []).map((s) => `<li>${escapeHtml(s)}</li>`).join('')}</ol>
+          <footer>${escapeHtml(e.file || '')} &middot; ${escapeHtml(e.status || '')} &middot; ${Math.round((e.durationMs || 0) / 1000)}s &middot; ${escapeHtml((e.updatedAt || '').slice(0, 10))}</footer>
+        </article>`).join('');
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+    function escapeAttr(s) {
+      return String(s).replace(/"/g, '&quot;');
+    }
+
+    q.addEventListener('input', () => render(q.value));
+
+    fetch('../library/manifest.json')
+      .then((r) => { if (!r.ok) throw new Error('manifest not found'); return r.json(); })
+      .then((data) => { entries = data; render(q.value); })
+      .catch((err) => { list.innerHTML = `<div class="error">Could not load ../library/manifest.json — serve the repo over http (e.g. npx serve .) instead of file://. (${escapeHtml(err.message)})</div>`; });
+  </script>
+</body>
+</html>
