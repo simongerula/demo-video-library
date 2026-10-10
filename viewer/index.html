@@ -10,6 +10,9 @@
     header h1 { margin: 0 0 8px; font-size: 20px; }
     #q { width: 100%; max-width: 480px; padding: 8px 12px; font-size: 15px; border-radius: 6px; border: 1px solid #ccc; }
     #count { margin-top: 8px; font-size: 13px; color: #bbb; }
+    #chips { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+    #chips button { padding: 6px 12px; font-size: 13px; border-radius: 20px; border: 1px solid #555; background: transparent; color: #fff; cursor: pointer; }
+    #chips button[aria-pressed="true"] { background: #fff; color: #111; border-color: #fff; }
     main { padding: 24px; display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); }
     article { background: #fff; border-radius: 10px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
     article h2 { margin: 0 0 8px; font-size: 17px; }
@@ -24,6 +27,7 @@
   <header>
     <h1>E2E Video Library</h1>
     <input id="q" type="search" placeholder="Search flows… e.g. register" autocomplete="off" />
+    <div id="chips"></div>
     <div id="count"></div>
   </header>
   <main id="list"></main>
@@ -32,7 +36,17 @@
     const list = document.getElementById('list');
     const q = document.getElementById('q');
     const count = document.getElementById('count');
+    const chips = document.getElementById('chips');
     let entries = [];
+    let activeSection = 'all';
+
+    // Section = first folder under tests/ ("tests/auth/x.spec.ts" -> "auth").
+    // "helpers" holds shared code, never flows, so it is excluded.
+    function sectionOf(e) {
+      const m = /^tests\/([^/]+)\//.exec(e.file || '');
+      if (!m || m[1] === 'helpers') return 'other';
+      return m[1];
+    }
 
     function searchable(e) {
       return [e.title, (e.steps || []).join(' '), e.summary || '', (e.tags || []).join(' '),
@@ -48,9 +62,27 @@
       return '../' + v;
     }
 
+    function renderChips() {
+      const counts = {};
+      for (const e of entries) {
+        const s = sectionOf(e);
+        counts[s] = (counts[s] || 0) + 1;
+      }
+      const sections = Object.keys(counts).sort();
+      const btn = (value, label) =>
+        `<button data-section="${escapeAttr(value)}" aria-pressed="${value === activeSection}">${escapeHtml(label)}</button>`;
+      chips.innerHTML =
+        btn('all', `All (${entries.length})`) +
+        sections.map((s) => btn(s, `${s} (${counts[s]})`)).join('');
+    }
+
     function render(filter = '') {
       const f = filter.trim().toLowerCase();
-      const shown = f ? entries.filter((e) => searchable(e).includes(f)) : entries;
+      const shown = entries.filter(
+        (e) =>
+          (activeSection === 'all' || sectionOf(e) === activeSection) &&
+          (!f || searchable(e).includes(f)),
+      );
       count.textContent = `${shown.length} of ${entries.length} flows`;
       list.innerHTML = shown.map((e) => `
         <article>
@@ -75,9 +107,17 @@
 
     q.addEventListener('input', () => render(q.value));
 
+    chips.addEventListener('click', (ev) => {
+      const btn = ev.target.closest('button[data-section]');
+      if (!btn) return;
+      activeSection = btn.dataset.section;
+      renderChips();
+      render(q.value);
+    });
+
     fetch('../library/manifest.json')
       .then((r) => { if (!r.ok) throw new Error('manifest not found'); return r.json(); })
-      .then((data) => { entries = data; render(q.value); })
+      .then((data) => { entries = data; renderChips(); render(q.value); })
       .catch((err) => { list.innerHTML = `<div class="error">Could not load ../library/manifest.json — serve the repo over http (e.g. npx serve .) instead of file://. (${escapeHtml(err.message)})</div>`; });
   </script>
 </body>
