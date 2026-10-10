@@ -16,9 +16,19 @@ A new joiner types "register" or "checkout" → gets a real recorded video of th
 2. **A custom reporter captures everything.** `lib/video-reporter.ts` hooks into Playwright, collects the `test.step` titles plus the recorded video path per test, and writes one JSON per test.
 3. **A manifest becomes the index.** `scripts/build-manifest.js` copies videos into `library/videos/` and merges everything into `library/manifest.json` (one entry per flow: title, steps, video, date, commit).
 4. **A static viewer makes it searchable.** `viewer/index.html` (no framework) loads the manifest, with a search box over titles + steps. Same file works locally and hosted.
-5. **CI publishes on merge.** `.github/workflows/video-library.yml` runs only when `tests/**` changes: re-records with video on, rebuilds the manifest, syncs `library/` + `viewer/` to S3, and invalidates the CloudFront cache. Unchanged flows keep their existing videos (incremental, cheap).
+5. **CI publishes on merge.** `.github/workflows/video-library.yml` runs only when `tests/**` changes: re-records with video on, rebuilds the manifest, syncs `library/` + `viewer/` to S3, and invalidates the CloudFront cache. Unchanged flows keep their existing videos (incremental, cheap). Future improvement: run only the modified spec files per merge (detect via `git diff`) instead of the whole suite — the manifest merge already supports it.
 
 Planned next: AI summaries/tags via GitHub Copilot SDK, and a Slack post (`#e2e-demos`) every time a flow is published. See `PLAN.md` for the full design.
+
+## It works end-to-end
+
+Merging a PR that touches `tests/**` triggers `video-library`, which re-records, rebuilds the manifest, syncs to S3 and invalidates CloudFront:
+
+![video-library workflow run after merge](docs/images/workflow-run.png)
+
+The published library shows the video, `test.step` list and consumed endpoints per flow:
+
+![published video library with two flows](docs/images/library.png)
 
 ## What's needed to get it working
 
