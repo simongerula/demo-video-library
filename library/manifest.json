@@ -1,12 +1,81 @@
 [
   {
     "v": 1,
+    "id": "checkout-search-product-and-complete-checkout",
+    "title": "Search product and complete checkout",
+    "file": "tests/cart/checkout.spec.ts",
+    "video": "library/videos/checkout-search-product-and-complete-checkout.webm",
+    "status": "passed",
+    "durationMs": 44668,
+    "steps": [
+      "Register a fresh buyer",
+      "Search for Blue Top",
+      "Add searched product to cart",
+      "Proceed to checkout and verify address",
+      "Place order",
+      "Pay with test card",
+      "Verify order success and clean up"
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/login"
+      },
+      {
+        "method": "POST",
+        "path": "/signup"
+      },
+      {
+        "method": "GET",
+        "path": "/account_created"
+      },
+      {
+        "method": "GET",
+        "path": "/products"
+      },
+      {
+        "method": "GET",
+        "path": "/add_to_cart/1"
+      },
+      {
+        "method": "GET",
+        "path": "/view_cart"
+      },
+      {
+        "method": "GET",
+        "path": "/checkout"
+      },
+      {
+        "method": "GET",
+        "path": "/payment"
+      },
+      {
+        "method": "POST",
+        "path": "/payment"
+      },
+      {
+        "method": "GET",
+        "path": "/payment_done/500"
+      },
+      {
+        "method": "GET",
+        "path": "/delete_account"
+      }
+    ],
+    "summary": null,
+    "tags": [],
+    "updatedAt": "2026-10-10T08:15:55.726Z",
+    "commit": null,
+    "runUrl": null
+  },
+  {
+    "v": 1,
     "id": "register-register-new-user",
     "title": "Register new user",
     "file": "tests/auth/register.spec.ts",
     "video": "library/videos/register-register-new-user.webm",
     "status": "passed",
-    "durationMs": 27110,
+    "durationMs": 22718,
     "steps": [
       "Open home page and confirm store loads",
       "Go to Signup / Login",
@@ -36,7 +105,7 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-10T05:51:06.695Z",
+    "updatedAt": "2026-10-10T08:15:55.736Z",
     "commit": null,
     "runUrl": null
   }
