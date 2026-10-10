@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { blockAds } from '../helpers/ads';
 
 test('Register new user', async ({ page }) => {
   const timestamp = Date.now();
@@ -7,6 +8,7 @@ test('Register new user', async ({ page }) => {
   const password = 'Test1234!';
 
   await test.step('Open home page and confirm store loads', async () => {
+    await blockAds(page);
     await page.goto('/');
     await expect(page.locator('header a:has-text("Home")').first()).toBeVisible();
   });
