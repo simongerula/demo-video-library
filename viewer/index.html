@@ -39,6 +39,14 @@
         .join(' ').toLowerCase();
     }
 
+    function videoSrc(e) {
+      let v = e.video || '';
+      // Legacy manifests stored video relative to library/ ("videos/x.webm");
+      // normalize to bucket-root-relative ("library/videos/x.webm").
+      if (v.startsWith('videos/')) v = 'library/' + v;
+      return '../' + v;
+    }
+
     function render(filter = '') {
       const f = filter.trim().toLowerCase();
       const shown = f ? entries.filter((e) => searchable(e).includes(f)) : entries;
@@ -47,7 +55,7 @@
         <article>
           <h2>${escapeHtml(e.title)}</h2>
           ${e.video
-            ? `<video controls preload="metadata" src="../${escapeAttr(e.video)}"></video>`
+            ? `<video controls preload="metadata" src="${escapeAttr(videoSrc(e))}"></video>`
             : `<div class="no-video">No video recorded yet</div>`}
           <ol>${(e.steps || []).map((s) => `<li>${escapeHtml(s)}</li>`).join('')}</ol>
           <footer>${escapeHtml(e.file || '')} &middot; ${escapeHtml(e.status || '')} &middot; ${Math.round((e.durationMs || 0) / 1000)}s &middot; ${escapeHtml((e.updatedAt || '').slice(0, 10))}</footer>

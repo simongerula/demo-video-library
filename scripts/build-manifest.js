@@ -52,7 +52,7 @@ for (const file of files) {
   if (record.videoPath && fs.existsSync(record.videoPath)) {
     const dest = path.join(videosDir, `${record.id}.webm`);
     fs.copyFileSync(record.videoPath, dest);
-    videoRel = path.relative(libraryDir, dest);
+    videoRel = path.relative(process.cwd(), dest);
   }
 
   byId.set(record.id, {
