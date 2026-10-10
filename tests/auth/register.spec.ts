@@ -52,7 +52,12 @@ test('Register new user', async ({ page }) => {
   });
 
   await test.step('Delete account to clean up', async () => {
-    await page.goto('/delete_account');
+    // Real click so the video shows it; fall back to direct navigation
+    // if an overlay still intercepts (keeps the test stable either way).
+    await page
+      .getByRole('link', { name: /delete account/i })
+      .click({ timeout: 8000 })
+      .catch(() => page.goto('/delete_account'));
     await expect(page.locator('[data-qa="account-deleted"]')).toBeVisible();
     await page.locator('[data-qa="continue-button"]').click();
   });

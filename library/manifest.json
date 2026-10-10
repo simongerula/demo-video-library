@@ -6,7 +6,7 @@
     "file": "tests/auth/register.spec.ts",
     "video": "library/videos/register-register-new-user.webm",
     "status": "passed",
-    "durationMs": 31260,
+    "durationMs": 21869,
     "steps": [
       "Open home page and confirm store loads",
       "Go to Signup / Login",
@@ -18,7 +18,7 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-10T05:17:52.309Z",
+    "updatedAt": "2026-10-10T05:33:04.869Z",
     "commit": null,
     "runUrl": null
   }
