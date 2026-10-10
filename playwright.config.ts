@@ -15,7 +15,12 @@ export default defineConfig({
     baseURL: 'https://www.automationexercise.com',
     trace: 'off',
     screenshot: 'only-on-failure',
-    video: process.env.LIBRARY_RUN ? 'on' : 'retain-on-failure',
+    video: {
+      mode: process.env.LIBRARY_RUN ? 'on' : 'retain-on-failure',
+      show: {
+        actions: { duration: 500, position: 'top-right', fontSize: 14 },
+      },
+    },
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },

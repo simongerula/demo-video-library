@@ -4,11 +4,11 @@
     "id": "register-register-new-user",
     "title": "Register new user",
     "file": "tests/auth/register.spec.ts",
-    "video": "videos/register-register-new-user.webm",
+    "video": "library/videos/register-register-new-user.webm",
     "status": "passed",
-    "durationMs": 10778,
+    "durationMs": 21906,
     "steps": [
-      "Open home page",
+      "Open home page and confirm store loads",
       "Go to Signup / Login",
       "Start signup with name and email",
       "Fill account information",
@@ -18,7 +18,7 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-09T01:16:42.426Z",
+    "updatedAt": "2026-10-10T05:02:54.270Z",
     "commit": null,
     "runUrl": null
   }
