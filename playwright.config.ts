@@ -19,7 +19,7 @@ export default defineConfig({
       mode: process.env.LIBRARY_RUN ? 'on' : 'retain-on-failure',
       show: {
         actions: {
-          duration: 500,
+          duration: 1200,
           position: 'top-right',
           fontSize: 14,
           style: { title: 'display: none' },
