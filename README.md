@@ -14,7 +14,7 @@ A new joiner types "register" or "checkout" → gets a real recorded video of th
 
 1. **Tests describe themselves.** Every test wraps user-visible actions in `await test.step('...')` (e.g. `Start signup with name and email`). These titles become the searchable, human-readable summary — no AI video analysis needed.
 2. **A custom reporter captures everything.** `lib/video-reporter.ts` hooks into Playwright, collects the `test.step` titles plus the recorded video path per test, and writes one JSON per test.
-3. **A manifest becomes the index.** `scripts/build-manifest.js` copies videos into `library/videos/` and merges everything into `library/manifest.json` (one entry per flow: title, steps, video, date, commit).
+3. **A manifest becomes the index.** `scripts/build-manifest.js` copies videos into `library/videos/` and merges everything into `library/manifest.json` (one entry per flow: title, steps, endpoints, video, date, commit). The manifest is plain JSON by design, so AI agents can fetch it and familiarize themselves with available flows and their context before acting.
 4. **A static viewer makes it searchable.** `viewer/index.html` (no framework) loads the manifest, with a search box over titles + steps. Same file works locally and hosted.
 5. **CI publishes on merge.** `.github/workflows/video-library.yml` runs only when `tests/**` changes: re-records with video on, rebuilds the manifest, syncs `library/` + `viewer/` to S3, and invalidates the CloudFront cache. Unchanged flows keep their existing videos (incremental, cheap). Future improvement: run only the modified spec files per merge (detect via `git diff`) instead of the whole suite — the manifest merge already supports it.
 
