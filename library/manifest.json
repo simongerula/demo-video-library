@@ -6,7 +6,7 @@
     "file": "tests/auth/register.spec.ts",
     "video": "library/videos/register-register-new-user.webm",
     "status": "passed",
-    "durationMs": 21869,
+    "durationMs": 27110,
     "steps": [
       "Open home page and confirm store loads",
       "Go to Signup / Login",
@@ -16,9 +16,27 @@
       "Verify account created and logged in",
       "Delete account to clean up"
     ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/login"
+      },
+      {
+        "method": "POST",
+        "path": "/signup"
+      },
+      {
+        "method": "GET",
+        "path": "/account_created"
+      },
+      {
+        "method": "GET",
+        "path": "/delete_account"
+      }
+    ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-10T05:33:04.869Z",
+    "updatedAt": "2026-10-10T05:51:06.695Z",
     "commit": null,
     "runUrl": null
   }

@@ -41,6 +41,8 @@ demo-video-library/
     auth/register.spec.ts
     auth/login-cart.spec.ts       # re-add later to test merge workflow
     cart/checkout.spec.ts         # re-add later to test merge workflow
+    helpers/ads.ts                # block third-party ad hosts via page.route
+    helpers/network.ts            # track same-origin endpoints -> 'endpoints' attachment
   lib/
     video-reporter.ts       # custom reporter: onStepBegin/End, onTestEnd captures video path
   scripts/
