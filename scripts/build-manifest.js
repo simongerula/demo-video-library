@@ -64,6 +64,7 @@ for (const file of files) {
     status: record.status,
     durationMs: record.durationMs,
     steps: record.steps ?? [],
+    endpoints: record.endpoints ?? byId.get(record.id)?.endpoints ?? [],
     summary: byId.get(record.id)?.summary ?? null,
     tags: byId.get(record.id)?.tags ?? [],
     updatedAt: new Date().toISOString(),

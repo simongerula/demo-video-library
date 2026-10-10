@@ -35,7 +35,8 @@
     let entries = [];
 
     function searchable(e) {
-      return [e.title, (e.steps || []).join(' '), e.summary || '', (e.tags || []).join(' ')]
+      return [e.title, (e.steps || []).join(' '), e.summary || '', (e.tags || []).join(' '),
+        (e.endpoints || []).map((e2) => `${e2.method} ${e2.path}`).join(' ')]
         .join(' ').toLowerCase();
     }
 
@@ -58,6 +59,9 @@
             ? `<video controls preload="metadata" src="${escapeAttr(videoSrc(e))}"></video>`
             : `<div class="no-video">No video recorded yet</div>`}
           <ol>${(e.steps || []).map((s) => `<li>${escapeHtml(s)}</li>`).join('')}</ol>
+          ${(e.endpoints || []).length
+            ? `<details><summary>Dev · endpoints (${e.endpoints.length})</summary><ul>${e.endpoints.map((e2) => `<li><code>${escapeHtml(e2.method)} ${escapeHtml(e2.path)}</code></li>`).join('')}</ul></details>`
+            : ''}
           <footer>${escapeHtml(e.file || '')} &middot; ${escapeHtml(e.status || '')} &middot; ${Math.round((e.durationMs || 0) / 1000)}s &middot; ${escapeHtml((e.updatedAt || '').slice(0, 10))}</footer>
         </article>`).join('');
     }

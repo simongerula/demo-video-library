@@ -66,6 +66,27 @@ class VideoReporter implements Reporter {
       (a) => a.name === 'video' || a.contentType?.startsWith('video'),
     );
 
+    let endpoints: { method: string; path: string }[] = [];
+    const endpointsAttachment = result.attachments.find((a) => a.name === 'endpoints');
+    try {
+      // Body attachments arrive in-memory (no path); file attachments via path.
+      const raw =
+        endpointsAttachment?.body?.toString('utf8') ??
+        (endpointsAttachment?.path ? fs.readFileSync(endpointsAttachment.path, 'utf8') : null);
+      const parsed: unknown = raw ? JSON.parse(raw) : [];
+      if (Array.isArray(parsed)) {
+        endpoints = parsed.filter(
+          (e): e is { method: string; path: string } =>
+            typeof e === 'object' &&
+            e !== null &&
+            typeof (e as { method?: unknown }).method === 'string' &&
+            typeof (e as { path?: unknown }).path === 'string',
+        );
+      }
+    } catch {
+      endpoints = [];
+    }
+
     const record = {
       v: 1,
       id,
@@ -77,6 +98,7 @@ class VideoReporter implements Reporter {
       durationMs: result.duration,
       steps: steps.map((s) => s.title),
       stepDetails: steps,
+      endpoints,
       videoPath: videoAttachment?.path ?? null,
     };
 

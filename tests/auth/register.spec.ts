@@ -1,13 +1,16 @@
 import { test, expect } from '@playwright/test';
 import { blockAds } from '../helpers/ads';
+import { trackEndpoints, type TrackedEndpoint } from '../helpers/network';
 
 test('Register new user', async ({ page }) => {
   const timestamp = Date.now();
   const userName = `demo${timestamp}`;
   const email = `demo${timestamp}@example.com`;
   const password = 'Test1234!';
+  let getEndpoints: () => TrackedEndpoint[] = () => [];
 
   await test.step('Open home page and confirm store loads', async () => {
+    getEndpoints = trackEndpoints(page);
     await blockAds(page);
     await page.goto('/');
     await expect(page.locator('header a:has-text("Home")').first()).toBeVisible();
@@ -60,5 +63,9 @@ test('Register new user', async ({ page }) => {
       .catch(() => page.goto('/delete_account'));
     await expect(page.locator('[data-qa="account-deleted"]')).toBeVisible();
     await page.locator('[data-qa="continue-button"]').click();
+    await test.info().attach('endpoints', {
+      body: JSON.stringify(getEndpoints()),
+      contentType: 'application/json',
+    });
   });
 });
