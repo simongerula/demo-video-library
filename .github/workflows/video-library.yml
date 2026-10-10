@@ -60,3 +60,8 @@ jobs:
         run: |
           aws s3 sync library/ "s3://$BUCKET/library/" --delete
           aws s3 sync viewer/ "s3://$BUCKET/viewer/" --delete
+          aws s3 cp index.html "s3://$BUCKET/index.html" --content-type "text/html"
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation --distribution-id "${{ secrets.DISTRIBUTION_ID }}" --paths "/*"

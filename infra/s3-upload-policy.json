@@ -11,8 +11,14 @@
       "Action": ["s3:PutObject", "s3:GetObject", "s3:DeleteObject"],
       "Resource": [
         "arn:aws:s3:::demo-video-library-simongerula/library/*",
-        "arn:aws:s3:::demo-video-library-simongerula/viewer/*"
+        "arn:aws:s3:::demo-video-library-simongerula/viewer/*",
+        "arn:aws:s3:::demo-video-library-simongerula/index.html"
       ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": ["cloudfront:CreateInvalidation"],
+      "Resource": "arn:aws:cloudfront::109257211970:distribution/E1B3GQRGKARZ6C"
     }
   ]
 }
