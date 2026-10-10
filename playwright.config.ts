@@ -18,7 +18,12 @@ export default defineConfig({
     video: {
       mode: process.env.LIBRARY_RUN ? 'on' : 'retain-on-failure',
       show: {
-        actions: { duration: 500, position: 'top-right', fontSize: 14 },
+        actions: {
+          duration: 500,
+          position: 'top-right',
+          fontSize: 14,
+          style: { title: 'display: none' },
+        },
       },
     },
   },
