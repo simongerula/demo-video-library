@@ -1,5 +1,7 @@
 # E2E Video Library
 
+> **Live demo:** https://d3882mw20sykae.cloudfront.net/viewer/index.html
+
 Turn your Playwright end-to-end tests into a **searchable video knowledge base** for developers, QA, and product.
 
 A new joiner types "register" or "checkout" → gets a real recorded video of that flow plus a step-by-step summary. No more digging through CI artifacts or asking "how is this flow supposed to look?".
