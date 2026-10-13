@@ -41,8 +41,8 @@ tests/
 Rules:
 
 - `tests/e2e/**` runs on every PR (`video: retain-on-failure`), never uploaded.
-- `tests/library/**` runs only in `video-library.yml` (`video: on`) + locally via
-  `LIBRARY_RUN=1 npx playwright test tests/library`.
+- `tests/functional/**` runs only in `video-library.yml` (`video: on`) + locally via
+  `LIBRARY_RUN=1 npx playwright test tests/functional`.
 - Library specs forbidden from calling `browser.newContext()` (dodges the
   multi-context video bug — see §7 spike). One `page` per test.
 
@@ -56,10 +56,10 @@ The reviewer's domain example (Job Uploaded → Quoting → Review → Confirm) 
 
 | File | Tests (each = one clip) | Starts at (already logged in) | In playlists |
 |------|-------------------------|-------------------------------|--------------|
-| `tests/library/search.spec.ts` | search Blue Top; filter results; sort results | `/products` | browse, checkout-story, support-story |
-| `tests/library/cart.spec.ts` | add Blue Top to cart; **update quantity**; remove item | `/products` or `/view_cart` with 1 item | checkout-story, cart-help |
-| `tests/library/checkout.spec.ts` | verify address step; pay with test card | `/view_cart` / `/payment` (via setup) | checkout-story, payments-help |
-| `tests/library/contact.spec.ts` | submit contact form with upload | `/contact_us` | support-story |
+| `tests/functional/search.spec.ts` | search Blue Top; filter results; sort results | `/products` | browse, checkout-story, support-story |
+| `tests/functional/cart.spec.ts` | add Blue Top to cart; **update quantity**; remove item | `/products` or `/view_cart` with 1 item | checkout-story, cart-help |
+| `tests/functional/checkout.spec.ts` | verify address step; pay with test card | `/view_cart` / `/payment` (via setup) | checkout-story, payments-help |
+| `tests/functional/contact.spec.ts` | submit contact form with upload | `/contact_us` | support-story |
 
 Example — the "modify quantity" case is its own test, not a chapter:
 
@@ -117,7 +117,7 @@ Normal CI (`LIBRARY_RUN` unset) uses `fill()` fast path — zero slowdown.
   "v": 2,
   "id": "cart-update-quantity",
   "title": "Update quantity",
-  "file": "tests/library/cart.spec.ts",
+  "file": "tests/functional/cart.spec.ts",
   "video": "library/videos/cart-update-quantity.webm",
   "clip": true,
   "durationMs": 15000,
@@ -158,7 +158,7 @@ s3://<bucket>/releases/<yyyy-mm-dd>-<sha>/library/…   # archive copy
 ## 7. CI split (unchanged direction, smaller trigger)
 
 - `e2e.yml`: on PR, `tests/e2e/**`, `video: retain-on-failure`, no upload.
-- `video-library.yml`: on `push: main, paths: tests/library/**` + `workflow_dispatch`,
+- `video-library.yml`: on `push: main, paths: tests/functional/**` + `workflow_dispatch`,
   runs library specs with `LIBRARY_RUN=1`, syncs `latest/` + snapshot `releases/`.
 - PR diff-check ("does this PR need video updates?") and scheduled recapture are
   **roadmap**, not MVP. `workflow_dispatch` covers bad-video recapture.
@@ -188,8 +188,8 @@ never presented as Playwright output.
 
 ## 10. Next steps (no code until approved)
 
-- [ ] move `tests/auth/*` → `tests/e2e/auth/*`, `tests/cart/*` → `tests/e2e/cart/*`
-- [ ] add `tests/library/cart.spec.ts` (add / update-qty / remove) + `tests/helpers/training.ts` + `auth-setup.ts`
+- [x] move `tests/auth/*` → `tests/e2e/auth/*`, `tests/cart/*` → `tests/e2e/cart/*`
+- [x] add `tests/functional/cart.spec.ts` (add / update-qty / remove)
 - [ ] reporter: error on >1 video; manifest v2 fields (`clip`, `playlists`); viewer playlists + Shorts filter
 - [ ] S3 paths → `latest/` + `releases/`; lifecycle 30d; document promotion
 - [ ] record `update quantity` clip, mock search/add/pay manifest entries for pitch

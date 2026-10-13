@@ -38,9 +38,9 @@ Later: change password, contact us, product search.
 demo-video-library/
   playwright.config.ts      # use: { video: 'on' }
   tests/
-    auth/register.spec.ts
-    auth/login-cart.spec.ts       # re-add later to test merge workflow
-    cart/checkout.spec.ts         # re-add later to test merge workflow
+    e2e/auth/register.spec.ts
+    e2e/cart/checkout.spec.ts
+    functional/cart.spec.ts       # functional clips: add / update-qty / remove (PLAN-V2)
     helpers/ads.ts                # block third-party ad hosts via page.route
     helpers/network.ts            # track same-origin endpoints -> 'endpoints' attachment
   lib/
