@@ -118,9 +118,9 @@ Two workflows to avoid slowing normal PRs:
 ### b) `video-library.yml` — new
 - on:
   ```yaml
-  push:
-    branches: [main]
-    paths: ['tests/**', 'playwright.config.ts']
+   push:
+     branches: [main]
+     paths: ['tests/functional/**', 'tests/helpers/**', 'playwright.config.ts']
   workflow_dispatch:
   ```
 - jobs:

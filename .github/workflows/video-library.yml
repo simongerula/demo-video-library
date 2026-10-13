@@ -1,14 +1,15 @@
 name: video-library
 
-# Re-runs changed e2e specs with video recording and publishes to S3.
+# Re-runs changed functional specs with video recording and publishes to S3.
 # Normal PR checks stay in e2e.yml (if present); this workflow only runs
-# when tests change on the default branch.
+# when functional tests change on the default branch.
 
 on:
   push:
     branches: [master, main]
     paths:
-      - 'tests/**'
+      - 'tests/functional/**'
+      - 'tests/helpers/**'
       - 'playwright.config.ts'
       - 'lib/video-reporter.ts'
       - 'scripts/build-manifest.js'
