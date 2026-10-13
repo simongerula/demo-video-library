@@ -7,7 +7,7 @@
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
-    "test:library": "LIBRARY_RUN=1 playwright test",
+    "test:library": "LIBRARY_RUN=1 playwright test tests/functional",
     "build:manifest": "node scripts/build-manifest.js"
   },
   "devDependencies": {

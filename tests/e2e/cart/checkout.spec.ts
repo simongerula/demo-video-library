@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { blockAds } from '../helpers/ads';
-import { trackEndpoints, type TrackedEndpoint } from '../helpers/network';
+import { blockAds } from '../../helpers/ads';
+import { trackEndpoints, type TrackedEndpoint } from '../../helpers/network';
 
 test('Search product and complete checkout', async ({ page }) => {
   const timestamp = Date.now();

@@ -1,12 +1,112 @@
 [
   {
     "v": 1,
+    "id": "cart-add-blue-top-to-cart",
+    "title": "add Blue Top to cart",
+    "file": "tests/functional/cart.spec.ts",
+    "video": "library/videos/cart-add-blue-top-to-cart.webm",
+    "status": "passed",
+    "durationMs": 5250,
+    "steps": [
+      "Open products and add Blue Top",
+      "Verify cart contains Blue Top"
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/products"
+      },
+      {
+        "method": "GET",
+        "path": "/add_to_cart/1"
+      },
+      {
+        "method": "GET",
+        "path": "/view_cart"
+      }
+    ],
+    "summary": null,
+    "tags": [],
+    "updatedAt": "2026-10-13T06:25:57.753Z",
+    "commit": null,
+    "runUrl": null
+  },
+  {
+    "v": 1,
+    "id": "cart-remove-item-from-cart",
+    "title": "remove item from cart",
+    "file": "tests/functional/cart.spec.ts",
+    "video": "library/videos/cart-remove-item-from-cart.webm",
+    "status": "passed",
+    "durationMs": 6191,
+    "steps": [
+      "Add Blue Top to cart",
+      "Remove Blue Top and verify cart is empty"
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/products"
+      },
+      {
+        "method": "GET",
+        "path": "/add_to_cart/1"
+      },
+      {
+        "method": "GET",
+        "path": "/view_cart"
+      },
+      {
+        "method": "GET",
+        "path": "/delete_cart/1"
+      }
+    ],
+    "summary": null,
+    "tags": [],
+    "updatedAt": "2026-10-13T06:25:57.756Z",
+    "commit": null,
+    "runUrl": null
+  },
+  {
+    "v": 1,
+    "id": "cart-update-quantity",
+    "title": "update quantity",
+    "file": "tests/functional/cart.spec.ts",
+    "video": "library/videos/cart-update-quantity.webm",
+    "status": "passed",
+    "durationMs": 10413,
+    "steps": [
+      "Set quantity to 2 on Blue Top details",
+      "Verify cart shows quantity 2"
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/product_details/1"
+      },
+      {
+        "method": "GET",
+        "path": "/add_to_cart/1"
+      },
+      {
+        "method": "GET",
+        "path": "/view_cart"
+      }
+    ],
+    "summary": null,
+    "tags": [],
+    "updatedAt": "2026-10-13T06:25:57.757Z",
+    "commit": null,
+    "runUrl": null
+  },
+  {
+    "v": 1,
     "id": "checkout-search-product-and-complete-checkout",
     "title": "Search product and complete checkout",
-    "file": "tests/cart/checkout.spec.ts",
+    "file": "tests/e2e/cart/checkout.spec.ts",
     "video": "library/videos/checkout-search-product-and-complete-checkout.webm",
     "status": "passed",
-    "durationMs": 44668,
+    "durationMs": 36346,
     "steps": [
       "Register a fresh buyer",
       "Search for Blue Top",
@@ -64,7 +164,7 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-10T08:15:55.726Z",
+    "updatedAt": "2026-10-13T06:23:10.430Z",
     "commit": null,
     "runUrl": null
   },
@@ -72,10 +172,10 @@
     "v": 1,
     "id": "register-register-new-user",
     "title": "Register new user",
-    "file": "tests/auth/register.spec.ts",
+    "file": "tests/e2e/auth/register.spec.ts",
     "video": "library/videos/register-register-new-user.webm",
     "status": "passed",
-    "durationMs": 22718,
+    "durationMs": 27105,
     "steps": [
       "Open home page and confirm store loads",
       "Go to Signup / Login",
@@ -105,7 +205,7 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-10T08:15:55.736Z",
+    "updatedAt": "2026-10-13T06:23:10.438Z",
     "commit": null,
     "runUrl": null
   }
