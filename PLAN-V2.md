@@ -31,11 +31,12 @@ tests/
     cart.spec.ts          # describe('cart'): add, update-qty, remove-item (~3-4 tests)
     checkout.spec.ts      # describe('checkout'): address step, payment step (~2 tests)
     contact.spec.ts       # describe('contact-us'): fill + upload (~1-2 tests)
+  setup/
+    auth.setup.ts           # setup project: logged-in storageState, video off (see §4)
   helpers/
     ads.ts              # unchanged
     network.ts          # unchanged
-    training.ts         # NEW: LIBRARY_RUN-only helpers (slowType, pace)
-    auth-setup.ts       # NEW: storageState fixture (see §4)
+    auth-state.ts       # shared PROFILE_STATE_PATH constant
 ```
 
 Rules:
@@ -58,6 +59,7 @@ The reviewer's domain example (Job Uploaded → Quoting → Review → Confirm) 
 |------|-------------------------|-------------------------------|--------------|
 | `tests/functional/search.spec.ts` | search Blue Top; filter results; sort results | `/products` | browse, checkout-story, support-story |
 | `tests/functional/cart.spec.ts` | add Blue Top to cart; **update quantity**; remove item | `/products` or `/view_cart` with 1 item | checkout-story, cart-help |
+| `tests/functional/profile.spec.ts` | verify logged in; logout | `/` (logged in via setup state) | account-help |
 | `tests/functional/checkout.spec.ts` | verify address step; pay with test card | `/view_cart` / `/payment` (via setup) | checkout-story, payments-help |
 | `tests/functional/contact.spec.ts` | submit contact form with upload | `/contact_us` | support-story |
 
@@ -85,20 +87,26 @@ Current monoliths decompose as:
 
 ## 4. Production value: start in place, act human
 
-New `tests/helpers/training.ts` (only active when `LIBRARY_RUN=1`):
+~~`tests/helpers/training.ts` (slowType/pace)~~ — dropped 2026-10-13: action
+timing was fine without it; revisit only if clips look robotic.
 
-```ts
-// slowType(page.locator('#search_product'), 'Blue Top') → type() with 40-60ms delay
-// pace() → 300-500ms pause between test.steps for chapter readability
-// libraryStep(title, fn) → test.step + test.slow() + pace()
-```
+New `tests/setup/auth.setup.ts` (setup project, `dependencies: ['setup']` on chromium):
 
-New `tests/helpers/auth-setup.ts`:
-
-- Playwright `storageState` project: one setup spec registers/logins once,
-  writes `test-results/.auth/user.json`.
-- Library specs use `storageState: 'test-results/.auth/user.json'` so video
+- One setup spec registers/logs in once (reuses saved session when still valid),
+  writes `test-results/.auth/profile.json`. Runs with `video: off`.
+- Library specs use `test.use({ storageState })` so video
   opens **already logged in, on the task page** — no login preamble.
+- `scripts/build-manifest.js` skips `tests/setup/` records: setup is never a library entry.
+- Gotcha (hit 2026-10-13): `test.use({ storageState })` with a missing file poisons
+  even raw `chromium.launch()` contexts in that file — hence setup project instead
+  of beforeAll login. Never create the state lazily inside a consuming spec file.
+- Why not login in `beforeEach` (decided 2026-10-13): `beforeEach` runs inside the
+  test's recorded context, so every clip would open with ~15s of login preamble —
+  the exact thing setup exists to remove. It also costs one login per test instead
+  of one per run, and parallel workers would race account creation (unique emails
+  per test + throwaway-account litter). Exception: destructive tests (delete/mutate
+  account) need their own account — those register in-test and accept the preamble
+  as honest content instead of using shared state.
 - Fixed viewport `1280x720` (already in config), highlights stay off.
 
 Normal CI (`LIBRARY_RUN` unset) uses `fill()` fast path — zero slowdown.
@@ -190,6 +198,7 @@ never presented as Playwright output.
 
 - [x] move `tests/auth/*` → `tests/e2e/auth/*`, `tests/cart/*` → `tests/e2e/cart/*`
 - [x] add `tests/functional/cart.spec.ts` (add / update-qty / remove)
+- [x] add `tests/setup/auth.setup.ts` + `tests/functional/profile.spec.ts` (login off camera via setup project, `video: off`, filtered from manifest)
 - [ ] reporter: error on >1 video; manifest v2 fields (`clip`, `playlists`); viewer playlists + Shorts filter
 - [ ] S3 paths → `latest/` + `releases/`; lifecycle 30d; document promotion
 - [ ] record `update quantity` clip, mock search/add/pay manifest entries for pitch

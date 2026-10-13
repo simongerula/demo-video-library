@@ -41,8 +41,11 @@ demo-video-library/
     e2e/auth/register.spec.ts
     e2e/cart/checkout.spec.ts
     functional/cart.spec.ts       # functional clips: add / update-qty / remove (PLAN-V2)
+    functional/profile.spec.ts    # logged-in clips via setup storageState (PLAN-V2)
+    setup/auth.setup.ts           # setup project: logged-in state, video off, never in manifest
     helpers/ads.ts                # block third-party ad hosts via page.route
     helpers/network.ts            # track same-origin endpoints -> 'endpoints' attachment
+    helpers/auth-state.ts         # shared PROFILE_STATE_PATH constant
   lib/
     video-reporter.ts       # custom reporter: onStepBegin/End, onTestEnd captures video path
   scripts/
