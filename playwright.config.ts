@@ -28,6 +28,17 @@ export default defineConfig({
     },
   },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    {
+      // Guarantees tests/setup/auth.setup.ts (logged-in storage state) runs
+      // first, even for path-filtered runs. Video off: setup is never recorded.
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+      use: { video: 'off' },
+    },
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+      dependencies: ['setup'],
+    },
   ],
 });

@@ -47,6 +47,7 @@ const runUrl =
 
 for (const file of files) {
   const record = JSON.parse(fs.readFileSync(path.join(resultsDir, file), 'utf8'));
+  if (record.file?.includes('tests/setup/')) continue; // auth setup, never a library entry
   let videoRel = byId.get(record.id)?.video ?? null;
 
   if (record.videoPath && fs.existsSync(record.videoPath)) {

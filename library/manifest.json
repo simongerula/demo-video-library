@@ -98,5 +98,52 @@
     "updatedAt": "2026-10-13T06:25:57.757Z",
     "commit": null,
     "runUrl": null
+  },
+  {
+    "v": 1,
+    "id": "profile-logout",
+    "title": "logout",
+    "file": "tests/functional/profile.spec.ts",
+    "video": "library/videos/profile-logout.webm",
+    "status": "passed",
+    "durationMs": 4210,
+    "steps": [
+      "Open home page while logged in",
+      "Log out and verify login page"
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/logout"
+      },
+      {
+        "method": "GET",
+        "path": "/login"
+      }
+    ],
+    "summary": null,
+    "tags": [],
+    "updatedAt": "2026-10-13T06:52:55.399Z",
+    "commit": null,
+    "runUrl": null
+  },
+  {
+    "v": 1,
+    "id": "profile-verify-logged-in",
+    "title": "verify logged in",
+    "file": "tests/functional/profile.spec.ts",
+    "video": "library/videos/profile-verify-logged-in.webm",
+    "status": "passed",
+    "durationMs": 1802,
+    "steps": [
+      "Open home page while logged in",
+      "Verify account links are shown"
+    ],
+    "endpoints": [],
+    "summary": null,
+    "tags": [],
+    "updatedAt": "2026-10-13T06:52:55.404Z",
+    "commit": null,
+    "runUrl": null
   }
 ]
