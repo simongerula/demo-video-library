@@ -1,18 +1,29 @@
 import { test, expect } from '@playwright/test';
-import { blockAds } from '../helpers/ads';
-import { trackEndpoints, type TrackedEndpoint } from '../helpers/network';
+import { blockAds } from '../../helpers/ads';
+import { trackEndpoints, type TrackedEndpoint } from '../../helpers/network';
 
 // Functional clips for the cart page: one file, one test per clip.
 // Each test is guest-mode (no login), starts in place, and stays <30s on camera.
 // Cleanup is navigation only (clear cart), never account deletion.
 
-test.describe('cart', () => {
-  test('add Blue Top to cart', async ({ page }) => {
+test.describe('Cart summary', () => {
+  test.beforeEach(async ({ page }) => {
+    await blockAds(page);
+  });
+
+  test(
+    'add Blue Top to cart',
+    {
+      annotation: [
+        { type: 'story', description: 'checkout-story' },
+        { type: 'topic', description: 'cart-help' },
+      ],
+    },
+    async ({ page }) => {
     let getEndpoints: () => TrackedEndpoint[] = () => [];
 
     await test.step('Open products and add Blue Top', async () => {
       getEndpoints = trackEndpoints(page);
-      await blockAds(page);
       await page.goto('/products');
       await expect(page.getByText('All Products')).toBeVisible();
       await page.locator('.productinfo a[data-product-id="1"]').first().click();
@@ -30,12 +41,19 @@ test.describe('cart', () => {
     });
   });
 
-  test('update quantity', async ({ page }) => {
+  test(
+    'update quantity',
+    {
+      annotation: [
+        { type: 'story', description: 'checkout-story' },
+        { type: 'topic', description: 'cart-help' },
+      ],
+    },
+    async ({ page }) => {
     let getEndpoints: () => TrackedEndpoint[] = () => [];
 
     await test.step('Set quantity to 2 on Blue Top details', async () => {
       getEndpoints = trackEndpoints(page);
-      await blockAds(page);
       await page.goto('/product_details/1');
       await expect(page.locator('#quantity')).toBeVisible();
       await page.locator('#quantity').fill('2');
@@ -55,12 +73,14 @@ test.describe('cart', () => {
     });
   });
 
-  test('remove item from cart', async ({ page }) => {
+  test(
+    'remove item from cart',
+    { annotation: [{ type: 'topic', description: 'cart-help' }] },
+    async ({ page }) => {
     let getEndpoints: () => TrackedEndpoint[] = () => [];
 
     await test.step('Add Blue Top to cart', async () => {
       getEndpoints = trackEndpoints(page);
-      await blockAds(page);
       await page.goto('/products');
       await expect(page.getByText('All Products')).toBeVisible();
       await page.locator('.productinfo a[data-product-id="1"]').first().click();

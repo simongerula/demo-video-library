@@ -1,23 +1,29 @@
 import { test, expect } from '@playwright/test';
-import { blockAds } from '../helpers/ads';
-import { trackEndpoints, type TrackedEndpoint } from '../helpers/network';
-import { PROFILE_STATE_PATH } from '../helpers/auth-state';
+import { blockAds } from '../../helpers/ads';
+import { trackEndpoints, type TrackedEndpoint } from '../../helpers/network';
+import { PROFILE_STATE_PATH } from '../../helpers/auth-state';
 
-// Functional clips for the logged-in account area. Login happens in beforeAll
-// via an unrecorded context (see helpers/auth-state.ts), so every video opens
-// already logged in — the login flow is never on camera.
+// Functional clips for the logged-in account area. Login happens in the setup
+// project via an unrecorded context (see tests/setup/auth.setup.ts), so every
+// video opens already logged in — the login flow is never on camera.
 // Tests are non-destructive (never delete the shared profile user) and safe
 // to run in parallel: each test gets a fresh context from the state file.
 
-test.describe('profile', () => {
+test.describe('Profile summary', () => {
   test.use({ storageState: PROFILE_STATE_PATH });
 
-  test('verify logged in', async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
+    await blockAds(page);
+  });
+
+  test(
+    'verify logged in',
+    { annotation: [{ type: 'topic', description: 'account-help' }] },
+    async ({ page }) => {
     let getEndpoints: () => TrackedEndpoint[] = () => [];
 
     await test.step('Open home page while logged in', async () => {
       getEndpoints = trackEndpoints(page);
-      await blockAds(page);
       await page.goto('/');
       await expect(page.getByText(/logged in as/i)).toBeVisible();
     });
@@ -32,12 +38,14 @@ test.describe('profile', () => {
     });
   });
 
-  test('logout', async ({ page }) => {
+  test(
+    'logout',
+    { annotation: [{ type: 'topic', description: 'account-help' }] },
+    async ({ page }) => {
     let getEndpoints: () => TrackedEndpoint[] = () => [];
 
     await test.step('Open home page while logged in', async () => {
       getEndpoints = trackEndpoints(page);
-      await blockAds(page);
       await page.goto('/');
       await expect(page.getByText(/logged in as/i)).toBeVisible();
     });

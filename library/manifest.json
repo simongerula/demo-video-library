@@ -1,12 +1,21 @@
 [
   {
-    "v": 1,
-    "id": "cart-add-blue-top-to-cart",
-    "title": "add Blue Top to cart",
-    "file": "tests/functional/cart.spec.ts",
-    "video": "library/videos/cart-add-blue-top-to-cart.webm",
+    "v": 2,
+    "id": "cart-cart-summary-add-blue-top-to-cart",
+    "title": "Cart summary › add Blue Top to cart",
+    "file": "tests/functional/cart/cart.spec.ts",
+    "video": "library/videos/cart-cart-summary-add-blue-top-to-cart.webm",
     "status": "passed",
-    "durationMs": 5250,
+    "durationMs": 5180,
+    "clip": true,
+    "feature": "Cart summary",
+    "playlists": [
+      "checkout-story"
+    ],
+    "useContext": [
+      "cart-help"
+    ],
+    "playlistOrder": null,
     "steps": [
       "Open products and add Blue Top",
       "Verify cart contains Blue Top"
@@ -27,18 +36,25 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-13T06:25:57.753Z",
+    "updatedAt": "2026-10-14T01:23:53.357Z",
     "commit": null,
     "runUrl": null
   },
   {
-    "v": 1,
-    "id": "cart-remove-item-from-cart",
-    "title": "remove item from cart",
-    "file": "tests/functional/cart.spec.ts",
-    "video": "library/videos/cart-remove-item-from-cart.webm",
+    "v": 2,
+    "id": "cart-cart-summary-remove-item-from-cart",
+    "title": "Cart summary › remove item from cart",
+    "file": "tests/functional/cart/cart.spec.ts",
+    "video": "library/videos/cart-cart-summary-remove-item-from-cart.webm",
     "status": "passed",
-    "durationMs": 6191,
+    "durationMs": 7395,
+    "clip": true,
+    "feature": "Cart summary",
+    "playlists": [],
+    "useContext": [
+      "cart-help"
+    ],
+    "playlistOrder": null,
     "steps": [
       "Add Blue Top to cart",
       "Remove Blue Top and verify cart is empty"
@@ -63,18 +79,27 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-13T06:25:57.756Z",
+    "updatedAt": "2026-10-14T01:23:53.360Z",
     "commit": null,
     "runUrl": null
   },
   {
-    "v": 1,
-    "id": "cart-update-quantity",
-    "title": "update quantity",
-    "file": "tests/functional/cart.spec.ts",
-    "video": "library/videos/cart-update-quantity.webm",
+    "v": 2,
+    "id": "cart-cart-summary-update-quantity",
+    "title": "Cart summary › update quantity",
+    "file": "tests/functional/cart/cart.spec.ts",
+    "video": "library/videos/cart-cart-summary-update-quantity.webm",
     "status": "passed",
-    "durationMs": 10413,
+    "durationMs": 5367,
+    "clip": true,
+    "feature": "Cart summary",
+    "playlists": [
+      "checkout-story"
+    ],
+    "useContext": [
+      "cart-help"
+    ],
+    "playlistOrder": null,
     "steps": [
       "Set quantity to 2 on Blue Top details",
       "Verify cart shows quantity 2"
@@ -95,18 +120,155 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-13T06:25:57.757Z",
+    "updatedAt": "2026-10-14T01:23:53.361Z",
     "commit": null,
     "runUrl": null
   },
   {
-    "v": 1,
-    "id": "profile-logout",
-    "title": "logout",
-    "file": "tests/functional/profile.spec.ts",
-    "video": "library/videos/profile-logout.webm",
+    "v": 2,
+    "id": "product-product-detail-summary-verify-add-to-cart-button",
+    "title": "Product detail summary › verify add to cart button",
+    "file": "tests/functional/product/product.spec.ts",
+    "video": "library/videos/product-product-detail-summary-verify-add-to-cart-button.webm",
     "status": "passed",
-    "durationMs": 4210,
+    "durationMs": 2535,
+    "clip": true,
+    "feature": "Product detail summary",
+    "playlists": [
+      "checkout-story"
+    ],
+    "useContext": [
+      "product-help"
+    ],
+    "playlistOrder": null,
+    "steps": [
+      "Open Blue Top details from mock",
+      "Add to cart from mocked details"
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/product_details/1"
+      },
+      {
+        "method": "GET",
+        "path": "/add_to_cart/1"
+      }
+    ],
+    "summary": null,
+    "tags": [],
+    "updatedAt": "2026-10-14T01:23:53.362Z",
+    "commit": null,
+    "runUrl": null
+  },
+  {
+    "v": 2,
+    "id": "product-product-detail-summary-verify-item-details-displayed",
+    "title": "Product detail summary › verify item details displayed",
+    "file": "tests/functional/product/product.spec.ts",
+    "video": "library/videos/product-product-detail-summary-verify-item-details-displayed.webm",
+    "status": "passed",
+    "durationMs": 1508,
+    "clip": true,
+    "feature": "Product detail summary",
+    "playlists": [],
+    "useContext": [
+      "product-help"
+    ],
+    "playlistOrder": null,
+    "steps": [
+      "Open Blue Top details from mock",
+      "Verify price and stock details"
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/product_details/1"
+      }
+    ],
+    "summary": null,
+    "tags": [],
+    "updatedAt": "2026-10-14T01:23:53.363Z",
+    "commit": null,
+    "runUrl": null
+  },
+  {
+    "v": 2,
+    "id": "product-product-detail-summary-verify-missing-reviews-are-displayed-empty",
+    "title": "Product detail summary › verify missing reviews are displayed empty",
+    "file": "tests/functional/product/product.spec.ts",
+    "video": "library/videos/product-product-detail-summary-verify-missing-reviews-are-displayed-empty.webm",
+    "status": "passed",
+    "durationMs": 1072,
+    "clip": true,
+    "feature": "Product detail summary",
+    "playlists": [],
+    "useContext": [
+      "product-help"
+    ],
+    "playlistOrder": null,
+    "steps": [
+      "Open details with base mock",
+      "Verify empty reviews state"
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/product_details/1"
+      }
+    ],
+    "summary": null,
+    "tags": [],
+    "updatedAt": "2026-10-14T01:23:53.364Z",
+    "commit": null,
+    "runUrl": null
+  },
+  {
+    "v": 2,
+    "id": "product-product-detail-summary-verify-reviews-are-displayed",
+    "title": "Product detail summary › verify reviews are displayed",
+    "file": "tests/functional/product/product.spec.ts",
+    "video": "library/videos/product-product-detail-summary-verify-reviews-are-displayed.webm",
+    "status": "passed",
+    "durationMs": 4475,
+    "clip": true,
+    "feature": "Product detail summary",
+    "playlists": [],
+    "useContext": [
+      "product-help"
+    ],
+    "playlistOrder": null,
+    "steps": [
+      "Open details with mocked reviews",
+      "Verify mocked reviews render"
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/product_details/1"
+      }
+    ],
+    "summary": null,
+    "tags": [],
+    "updatedAt": "2026-10-14T01:23:53.364Z",
+    "commit": null,
+    "runUrl": null
+  },
+  {
+    "v": 2,
+    "id": "profile-profile-summary-logout",
+    "title": "Profile summary › logout",
+    "file": "tests/functional/profile/profile.spec.ts",
+    "video": "library/videos/profile-profile-summary-logout.webm",
+    "status": "passed",
+    "durationMs": 3835,
+    "clip": true,
+    "feature": "Profile summary",
+    "playlists": [],
+    "useContext": [
+      "account-help"
+    ],
+    "playlistOrder": null,
     "steps": [
       "Open home page while logged in",
       "Log out and verify login page"
@@ -123,18 +285,25 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-13T06:52:55.399Z",
+    "updatedAt": "2026-10-14T01:23:53.364Z",
     "commit": null,
     "runUrl": null
   },
   {
-    "v": 1,
-    "id": "profile-verify-logged-in",
-    "title": "verify logged in",
-    "file": "tests/functional/profile.spec.ts",
-    "video": "library/videos/profile-verify-logged-in.webm",
+    "v": 2,
+    "id": "profile-profile-summary-verify-logged-in",
+    "title": "Profile summary › verify logged in",
+    "file": "tests/functional/profile/profile.spec.ts",
+    "video": "library/videos/profile-profile-summary-verify-logged-in.webm",
     "status": "passed",
-    "durationMs": 1802,
+    "durationMs": 1991,
+    "clip": true,
+    "feature": "Profile summary",
+    "playlists": [],
+    "useContext": [
+      "account-help"
+    ],
+    "playlistOrder": null,
     "steps": [
       "Open home page while logged in",
       "Verify account links are shown"
@@ -142,7 +311,7 @@
     "endpoints": [],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-13T06:52:55.404Z",
+    "updatedAt": "2026-10-14T01:23:53.365Z",
     "commit": null,
     "runUrl": null
   }

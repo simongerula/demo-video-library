@@ -40,8 +40,10 @@ demo-video-library/
   tests/
     e2e/auth/register.spec.ts
     e2e/cart/checkout.spec.ts
-    functional/cart.spec.ts       # functional clips: add / update-qty / remove (PLAN-V2)
-    functional/profile.spec.ts    # logged-in clips via setup storageState (PLAN-V2)
+    functional/cart/cart.spec.ts         # clips: add / update-qty / remove (PLAN-V2)
+    functional/profile/profile.spec.ts  # logged-in clips via setup state (PLAN-V2)
+    functional/product/product.spec.ts  # mocked clips via HTML fixtures (PLAN-V2)
+    functional/product/fixtures/        # saved product HTML variants
     setup/auth.setup.ts           # setup project: logged-in state, video off, never in manifest
     helpers/ads.ts                # block third-party ad hosts via page.route
     helpers/network.ts            # track same-origin endpoints -> 'endpoints' attachment
