@@ -87,14 +87,15 @@ class VideoReporter implements Reporter {
     const id = slugify([fileBase, ...describes, test.title].join(' '));
     const steps = collectTestSteps(result.steps);
 
-    // Library taxonomy, set per test via test(..., { annotation }) —
-    // { type: 'story', description } -> playlists, { type: 'topic', ... } -> useContext.
+    // Opt-in library membership + workflow tags, set per test via
+    // test(..., { annotation }). Untagged tests (e.g. e2e, setup) produce no
+    // record at all, so a touched file only (re)publishes its tagged tests.
+    // { type: 'library' } -> record it; { type: 'workflow', description } ->
+    // flow membership; { type: 'order', description } -> position in the flow.
     const annotations = test.annotations ?? [];
-    const playlists = annotations
-      .filter((a) => a.type === 'story')
-      .map((a) => a.description);
-    const useContext = annotations
-      .filter((a) => a.type === 'topic')
+    if (!annotations.some((a) => a.type === 'library')) return;
+    const workflows = annotations
+      .filter((a) => a.type === 'workflow')
       .map((a) => a.description);
     const orderRaw = annotations.find((a) => a.type === 'order')?.description;
     const orderParsed = orderRaw !== undefined ? Number.parseInt(orderRaw, 10) : NaN;
@@ -137,8 +138,7 @@ class VideoReporter implements Reporter {
       steps: steps.map((s) => s.title),
       stepDetails: steps,
       endpoints,
-      playlists,
-      useContext,
+      workflows,
       playlistOrder: Number.isNaN(orderParsed) ? null : orderParsed,
       videoPath: videoAttachment?.path ?? null,
     };

@@ -18,7 +18,13 @@ test.describe('Profile summary', () => {
 
   test(
     'verify logged in',
-    { annotation: [{ type: 'topic', description: 'account-help' }] },
+    {
+      annotation: [
+        { type: 'library' },
+        { type: 'workflow', description: 'account' },
+        { type: 'order', description: '1' },
+      ],
+    },
     async ({ page }) => {
     let getEndpoints: () => TrackedEndpoint[] = () => [];
 
@@ -40,7 +46,13 @@ test.describe('Profile summary', () => {
 
   test(
     'logout',
-    { annotation: [{ type: 'topic', description: 'account-help' }] },
+    {
+      annotation: [
+        { type: 'library' },
+        { type: 'workflow', description: 'account' },
+        { type: 'order', description: '2' },
+      ],
+    },
     async ({ page }) => {
     let getEndpoints: () => TrackedEndpoint[] = () => [];
 

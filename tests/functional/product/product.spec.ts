@@ -31,7 +31,13 @@ test.describe('Product detail summary', () => {
 
   test(
     'verify item details displayed',
-    { annotation: [{ type: 'topic', description: 'product-help' }] },
+    {
+      annotation: [
+        { type: 'library' },
+        { type: 'workflow', description: 'new order' },
+        { type: 'order', description: '1' },
+      ],
+    },
     async ({ page }) => {
       let getEndpoints: () => TrackedEndpoint[] = () => [];
 
@@ -57,8 +63,9 @@ test.describe('Product detail summary', () => {
     'verify add to cart button',
     {
       annotation: [
-        { type: 'story', description: 'checkout-story' },
-        { type: 'topic', description: 'product-help' },
+        { type: 'library' },
+        { type: 'workflow', description: 'new order' },
+        { type: 'order', description: '2' },
       ],
     },
     async ({ page }) => {
@@ -83,7 +90,7 @@ test.describe('Product detail summary', () => {
 
   test(
     'verify reviews are displayed',
-    { annotation: [{ type: 'topic', description: 'product-help' }] },
+    { annotation: [{ type: 'library' }] },
     async ({ page }) => {
       let getEndpoints: () => TrackedEndpoint[] = () => [];
 
@@ -114,7 +121,7 @@ test.describe('Product detail summary', () => {
 
   test(
     'verify missing reviews are displayed empty',
-    { annotation: [{ type: 'topic', description: 'product-help' }] },
+    { annotation: [{ type: 'library' }] },
     async ({ page }) => {
       let getEndpoints: () => TrackedEndpoint[] = () => [];
 
