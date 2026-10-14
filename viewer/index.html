@@ -15,7 +15,8 @@
     #chips button[aria-pressed="true"] { background: #fff; color: #111; border-color: #fff; }
     main { padding: 24px; display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); }
     article { background: #fff; border-radius: 10px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
-    article h2 { margin: 0 0 8px; font-size: 17px; }
+    article h2 { margin: 0 0 2px; font-size: 17px; }
+    .feature { font-size: 13px; color: #666; margin-bottom: 8px; }
     video { width: 100%; border-radius: 6px; background: #000; }
     .no-video { padding: 24px; text-align: center; background: #eee; border-radius: 6px; color: #666; }
     ol { padding-left: 20px; margin: 12px 0; font-size: 14px; }
@@ -26,7 +27,7 @@
 <body>
   <header>
     <h1>E2E Video Library</h1>
-    <input id="q" type="search" placeholder="Search flows… e.g. register" autocomplete="off" />
+    <input id="q" type="search" placeholder="Search flows… e.g. quantity" autocomplete="off" />
     <div id="chips"></div>
     <div id="count"></div>
   </header>
@@ -38,18 +39,39 @@
     const count = document.getElementById('count');
     const chips = document.getElementById('chips');
     let entries = [];
-    let activeSection = 'all';
+    let activeApp = 'all';
 
-    // Section = first folder under tests/ ("tests/auth/x.spec.ts" -> "auth").
-    // "helpers" holds shared code, never flows, so it is excluded.
-    function sectionOf(e) {
-      const m = /^tests\/([^/]+)\//.exec(e.file || '');
-      if (!m || m[1] === 'helpers') return 'other';
+    // App = immediate parent folder of the spec
+    // ("tests/functional/cart/cart.spec.ts" -> "cart").
+    // "helpers"/"setup"/"fixtures" hold shared code, never flows.
+    function appOf(e) {
+      const m = /^tests\/(?:.+?\/)*([^/]+)\/[^/]+$/.exec(e.file || '');
+      if (!m || ['helpers', 'setup', 'fixtures'].includes(m[1])) return 'other';
       return m[1];
     }
 
+    // Card shows the plain test name, minus a leading "verify " prefix and with
+    // the describe path living in the feature line instead.
+    function testName(e) {
+      const parts = (e.title || '').split(' › ');
+      const raw = parts[parts.length - 1].trim();
+      const stripped = raw.replace(/^verify\s+/i, '');
+      return stripped || raw;
+    }
+
+    // Reuse tags (playlists + useContext) stay searchable, just not filters.
+    function tagsOf(e) {
+      return [...(e.playlists || []), ...(e.useContext || [])];
+    }
+
+    function formatDuration(ms) {
+      if (ms == null) return '';
+      return `${Math.round(ms / 1000)}s`;
+    }
+
     function searchable(e) {
-      return [e.title, (e.steps || []).join(' '), e.summary || '', (e.tags || []).join(' '),
+      return [e.title, e.feature || '', (e.steps || []).join(' '), e.summary || '', (e.tags || []).join(' '),
+        tagsOf(e).join(' '),
         (e.endpoints || []).map((e2) => `${e2.method} ${e2.path}`).join(' ')]
         .join(' ').toLowerCase();
     }
@@ -65,28 +87,29 @@
     function renderChips() {
       const counts = {};
       for (const e of entries) {
-        const s = sectionOf(e);
+        const s = appOf(e);
         counts[s] = (counts[s] || 0) + 1;
       }
-      const sections = Object.keys(counts).sort();
+      const apps = Object.keys(counts).sort();
       const btn = (value, label) =>
-        `<button data-section="${escapeAttr(value)}" aria-pressed="${value === activeSection}">${escapeHtml(label)}</button>`;
+        `<button data-app="${escapeAttr(value)}" aria-pressed="${value === activeApp}">${escapeHtml(label)}</button>`;
       chips.innerHTML =
         btn('all', `All (${entries.length})`) +
-        sections.map((s) => btn(s, `${s} (${counts[s]})`)).join('');
+        apps.map((s) => btn(s, `${s} (${counts[s]})`)).join('');
     }
 
     function render(filter = '') {
       const f = filter.trim().toLowerCase();
       const shown = entries.filter(
         (e) =>
-          (activeSection === 'all' || sectionOf(e) === activeSection) &&
+          (activeApp === 'all' || appOf(e) === activeApp) &&
           (!f || searchable(e).includes(f)),
       );
       count.textContent = `${shown.length} of ${entries.length} flows`;
       list.innerHTML = shown.map((e) => `
         <article>
-          <h2>${escapeHtml(e.title)}</h2>
+          <h2>${escapeHtml(testName(e))}</h2>
+          ${e.feature ? `<div class="feature">${escapeHtml(e.feature)}</div>` : ''}
           ${e.video
             ? `<video controls preload="metadata" src="${escapeAttr(videoSrc(e))}"></video>`
             : `<div class="no-video">No video recorded yet</div>`}
@@ -94,7 +117,7 @@
           ${(e.endpoints || []).length
             ? `<details><summary>Dev · endpoints (${e.endpoints.length})</summary><ul>${e.endpoints.map((e2) => `<li><code>${escapeHtml(e2.method)} ${escapeHtml(e2.path)}</code></li>`).join('')}</ul></details>`
             : ''}
-          <footer>${escapeHtml(e.file || '')} &middot; ${escapeHtml(e.status || '')} &middot; ${Math.round((e.durationMs || 0) / 1000)}s &middot; ${escapeHtml((e.updatedAt || '').slice(0, 10))}</footer>
+          <footer>recorded: ${escapeHtml((e.updatedAt || '').slice(0, 10) || 'unknown')}</footer>
         </article>`).join('');
     }
 
@@ -108,9 +131,9 @@
     q.addEventListener('input', () => render(q.value));
 
     chips.addEventListener('click', (ev) => {
-      const btn = ev.target.closest('button[data-section]');
+      const btn = ev.target.closest('button[data-app]');
       if (!btn) return;
-      activeSection = btn.dataset.section;
+      activeApp = btn.dataset.app;
       renderChips();
       render(q.value);
     });

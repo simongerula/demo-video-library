@@ -42,15 +42,39 @@ function collectTestSteps(steps: TestStep[], out: StepInfo[] = []): StepInfo[] {
   return out;
 }
 
+// Describe hierarchy above the test, e.g. ['Product detail summary'].
+// Skips the project suite (title is the project name), the file-level suite
+// (title is the file path), and the root suite.
+function describePath(test: TestCase, projectNames: Set<string>): string[] {
+  const parts: string[] = [];
+  let suite = test.parent;
+  while (suite) {
+    if (
+      suite.title &&
+      !suite.title.endsWith('.ts') &&
+      !suite.title.includes('/') &&
+      !projectNames.has(suite.title)
+    ) {
+      parts.unshift(suite.title);
+    }
+    suite = suite.parent;
+  }
+  return parts;
+}
+
 class VideoReporter implements Reporter {
   private outputDir: string;
+  private projectNames: Set<string> = new Set();
 
   constructor(options: ReporterOptions = {}) {
     this.outputDir = options.outputDir ?? 'test-results/video-meta';
   }
 
-  onBegin(_config: FullConfig, _suite: Suite): void {
+  onBegin(config: FullConfig, _suite: Suite): void {
     fs.mkdirSync(this.outputDir, { recursive: true });
+    for (const project of config.projects) {
+      if (project.name) this.projectNames.add(project.name);
+    }
   }
 
   onTestEnd(test: TestCase, result: TestResult): void {
@@ -59,8 +83,21 @@ class VideoReporter implements Reporter {
         .split(path.sep)
         .pop()
         ?.replace(/\.spec\.ts$/, '') ?? 'spec';
-    const id = `${slugify(fileBase)}-${slugify(test.title)}`;
+    const describes = describePath(test, this.projectNames);
+    const id = slugify([fileBase, ...describes, test.title].join(' '));
     const steps = collectTestSteps(result.steps);
+
+    // Library taxonomy, set per test via test(..., { annotation }) —
+    // { type: 'story', description } -> playlists, { type: 'topic', ... } -> useContext.
+    const annotations = test.annotations ?? [];
+    const playlists = annotations
+      .filter((a) => a.type === 'story')
+      .map((a) => a.description);
+    const useContext = annotations
+      .filter((a) => a.type === 'topic')
+      .map((a) => a.description);
+    const orderRaw = annotations.find((a) => a.type === 'order')?.description;
+    const orderParsed = orderRaw !== undefined ? Number.parseInt(orderRaw, 10) : NaN;
 
     const videoAttachment = result.attachments.find(
       (a) => a.name === 'video' || a.contentType?.startsWith('video'),
@@ -90,7 +127,8 @@ class VideoReporter implements Reporter {
     const record = {
       v: 1,
       id,
-      title: test.title,
+      title: [...describes, test.title].join(' › '),
+      feature: describes[0] ?? '',
       file: path.relative(process.cwd(), test.location.file),
       project: test.parent.project()?.name ?? '',
       status: result.status,
@@ -99,6 +137,9 @@ class VideoReporter implements Reporter {
       steps: steps.map((s) => s.title),
       stepDetails: steps,
       endpoints,
+      playlists,
+      useContext,
+      playlistOrder: Number.isNaN(orderParsed) ? null : orderParsed,
       videoPath: videoAttachment?.path ?? null,
     };
 

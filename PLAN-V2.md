@@ -26,11 +26,11 @@ tests/
   e2e/                  # correctness, fast, existing suite moves here
     auth/register.spec.ts        # moved from tests/auth/
     cart/checkout.spec.ts        # moved from tests/cart/, keep as-is for CI
-  library/              # NEW: functional tests, one file per page, each test() = one clip
-    search.spec.ts        # describe('search'): search, filter, sort (~3 tests)
-    cart.spec.ts          # describe('cart'): add, update-qty, remove-item (~3-4 tests)
-    checkout.spec.ts      # describe('checkout'): address step, payment step (~2 tests)
-    contact.spec.ts       # describe('contact-us'): fill + upload (~1-2 tests)
+  functional/           # NEW: functional tests, one folder per app, each test() = one clip
+    cart/cart.spec.ts         # describe('Cart summary'): add, update-qty, remove
+    product/product.spec.ts   # describe('Product detail summary'): details, add, reviews ×2
+    product/fixtures/         # saved product HTML (base + with-reviews variants)
+    profile/profile.spec.ts   # describe('Profile summary'): logged-in, logout
   setup/
     auth.setup.ts           # setup project: logged-in storageState, video off (see §4)
   helpers/
@@ -55,13 +55,11 @@ per test, so one file yields N videos — grouping by file loses no granularity.
 
 The reviewer's domain example (Job Uploaded → Quoting → Review → Confirm) maps to:
 
-| File | Tests (each = one clip) | Starts at (already logged in) | In playlists |
-|------|-------------------------|-------------------------------|--------------|
-| `tests/functional/search.spec.ts` | search Blue Top; filter results; sort results | `/products` | browse, checkout-story, support-story |
-| `tests/functional/cart.spec.ts` | add Blue Top to cart; **update quantity**; remove item | `/products` or `/view_cart` with 1 item | checkout-story, cart-help |
-| `tests/functional/profile.spec.ts` | verify logged in; logout | `/` (logged in via setup state) | account-help |
-| `tests/functional/checkout.spec.ts` | verify address step; pay with test card | `/view_cart` / `/payment` (via setup) | checkout-story, payments-help |
-| `tests/functional/contact.spec.ts` | submit contact form with upload | `/contact_us` | support-story |
+| File | Tests (each = one clip) | Starts at | In playlists/topics |
+|------|-------------------------|-------------|---------------------|
+| `tests/functional/cart/cart.spec.ts` (`describe('Cart summary')`) | add Blue Top to cart; **update quantity**; remove item | `/products` or `/view_cart` with 1 item, guest | checkout-story, cart-help |
+| `tests/functional/profile/profile.spec.ts` (`describe('Profile summary')`) | verify logged in; logout | `/` (logged in via setup state) | account-help |
+| `tests/functional/product/product.spec.ts` (`describe('Product detail summary')`) | verify item details; verify add to cart button; verify reviews; verify empty reviews | `/product_details/1` (document mocked, rest live) | checkout-story, product-help |
 
 Example — the "modify quantity" case is its own test, not a chapter:
 
@@ -73,6 +71,24 @@ test('update quantity', { annotation: [{ type: 'useContext', description: 'cart-
 ```
 
 Searcher for "modify quantity" gets this 15s clip directly.
+
+Dashboard naming: the reporter builds dashboard titles from the describe path
+(`Product detail summary › verify add to cart button`) and records `feature`
+(top-level describe), so identical test names across files stay unambiguous.
+IDs include the describe slugs; the project suite is excluded (hit 2026-10-13:
+`chromium ›` leaked into every title). The viewer has a feature filter row and
+searches feature text. Card titles suppress a leading `verify ` prefix
+(`verify add to cart button` → `add to cart button`); manifest keeps full titles
+for search. Rebuilt IDs orphan old manifest entries — rebuild the
+manifest fresh (delete + recapture) after renaming describes.
+
+Mocked functionals (pattern from the product repos, adapted 2026-10-13): the
+demo site is fully server-rendered (product page = one document, zero API
+calls, verified by probe), so `tests/functional/product.spec.ts` mocks at the
+document level — `beforeEach` installs `route.fulfill` with saved HTML fixtures
+(`tests/functional/fixtures/`: base + with-reviews variant), everything else
+stays live. Fixtures drift if the site changes; re-capture the base HTML
+manually when assertions break.
 
 Each test uses deterministic data (fixed product id `1` = Blue Top, test card
 `4111111111111111`) so narration is stable. Cleanup (delete account) happens in
@@ -125,7 +141,7 @@ Normal CI (`LIBRARY_RUN` unset) uses `fill()` fast path — zero slowdown.
   "v": 2,
   "id": "cart-update-quantity",
   "title": "Update quantity",
-  "file": "tests/functional/cart.spec.ts",
+  "file": "tests/functional/cart/cart.spec.ts",
   "video": "library/videos/cart-update-quantity.webm",
   "clip": true,
   "durationMs": 15000,
@@ -197,8 +213,10 @@ never presented as Playwright output.
 ## 10. Next steps (no code until approved)
 
 - [x] move `tests/auth/*` → `tests/e2e/auth/*`, `tests/cart/*` → `tests/e2e/cart/*`
-- [x] add `tests/functional/cart.spec.ts` (add / update-qty / remove)
-- [x] add `tests/setup/auth.setup.ts` + `tests/functional/profile.spec.ts` (login off camera via setup project, `video: off`, filtered from manifest)
-- [ ] reporter: error on >1 video; manifest v2 fields (`clip`, `playlists`); viewer playlists + Shorts filter
+- [x] add `tests/functional/cart/cart.spec.ts` (add / update-qty / remove)
+- [x] add `tests/setup/auth.setup.ts` + `tests/functional/profile/profile.spec.ts` (login off camera via setup project, `video: off`, filtered from manifest)
+- [x] describe-aware dashboard titles + `feature` filter (project suite excluded)
+- [x] add `tests/functional/product/product.spec.ts` (mocked `describe('Product detail summary')` + HTML fixtures, replicates product-repo pattern)
+- [x] reporter: story/topic annotations → record; manifest v2 fields (`clip`, `playlists`, `useContext`); viewer story chips + Shorts filter + badges (chapters dropped with clips model)
 - [ ] S3 paths → `latest/` + `releases/`; lifecycle 30d; document promotion
 - [ ] record `update quantity` clip, mock search/add/pay manifest entries for pitch

@@ -57,13 +57,18 @@ for (const file of files) {
   }
 
   byId.set(record.id, {
-    v: 1,
+    v: 2,
     id: record.id,
     title: record.title,
     file: record.file,
     video: videoRel,
     status: record.status,
     durationMs: record.durationMs,
+    clip: record.file?.startsWith('tests/functional/') ?? false,
+    feature: record.feature ?? byId.get(record.id)?.feature ?? '',
+    playlists: record.playlists ?? byId.get(record.id)?.playlists ?? [],
+    useContext: record.useContext ?? byId.get(record.id)?.useContext ?? [],
+    playlistOrder: record.playlistOrder ?? byId.get(record.id)?.playlistOrder ?? null,
     steps: record.steps ?? [],
     endpoints: record.endpoints ?? byId.get(record.id)?.endpoints ?? [],
     summary: byId.get(record.id)?.summary ?? null,
