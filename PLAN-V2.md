@@ -49,22 +49,30 @@ Rules:
 
 ## 3. Functional coverage (automationexercise.com stand-ins)
 
-Real-life shape: `functional/<page>.spec.ts` holds all functional tests for that
-page. Each `test()` is one short clip (5–30s, 1–3 steps). Playwright records
+Real-life shape: `functional/<app>/<app>.spec.ts` holds all functional tests for
+that app. Each `test()` is one short clip (5–30s, 1–3 steps). Playwright records
 per test, so one file yields N videos — grouping by file loses no granularity.
+Only tests tagged `{ type: 'library' }` are recorded to the manifest; workflow
+membership is a second tag, so one clip can belong to several flows.
 
 The reviewer's domain example (Job Uploaded → Quoting → Review → Confirm) maps to:
 
-| File | Tests (each = one clip) | Starts at | In playlists/topics |
-|------|-------------------------|-------------|---------------------|
-| `tests/functional/cart/cart.spec.ts` (`describe('Cart summary')`) | add Blue Top to cart; **update quantity**; remove item | `/products` or `/view_cart` with 1 item, guest | checkout-story, cart-help |
-| `tests/functional/profile/profile.spec.ts` (`describe('Profile summary')`) | verify logged in; logout | `/` (logged in via setup state) | account-help |
-| `tests/functional/product/product.spec.ts` (`describe('Product detail summary')`) | verify item details; verify add to cart button; verify reviews; verify empty reviews | `/product_details/1` (document mocked, rest live) | checkout-story, product-help |
+| File | Tests (each = one clip) | Starts at | In workflows |
+|------|-------------------------|-------------|--------------|
+| `tests/functional/cart/cart.spec.ts` (`describe('Cart summary')`) | add Blue Top to cart; **update quantity**; remove item | `/products` or `/view_cart` with 1 item, guest | new order (add, update) |
+| `tests/functional/profile/profile.spec.ts` (`describe('Profile summary')`) | verify logged in; logout | `/` (logged in via setup state) | account |
+| `tests/functional/product/product.spec.ts` (`describe('Product detail summary')`) | verify item details; verify add to cart button; verify reviews; verify empty reviews | `/product_details/1` (document mocked, rest live) | new order (details, add) |
 
 Example — the "modify quantity" case is its own test, not a chapter:
 
 ```ts
-test('update quantity', { annotation: [{ type: 'useContext', description: 'cart-help' }] },
+test('update quantity', {
+  annotation: [
+    { type: 'library' },
+    { type: 'workflow', description: 'new order' },
+    { type: 'order', description: '4' },
+  ],
+},
   async ({ page }) => {
     await test.step('Change quantity to 2 and verify total', async () => { ... });
   });
@@ -127,42 +135,49 @@ New `tests/setup/auth.setup.ts` (setup project, `dependencies: ['setup']` on chr
 
 Normal CI (`LIBRARY_RUN` unset) uses `fill()` fast path — zero slowdown.
 
-## 5. Reporter + manifest (v2 delta)
+## 5. Reporter + manifest (v3)
 
-`lib/video-reporter.ts`: **no logic change for V2** except:
+`lib/video-reporter.ts`:
 
-- fail loudly if >1 video attachment (enforces single-context rule);
-- pass through `annotations` (`useContext`, `playlist`) from `test.info()`.
+- **Opt-in gate**: writes a record only for tests tagged `{ type: 'library' }`.
+  Untagged tests (e2e, setup, experiments) produce no JSON, so a touched file
+  only (re)publishes its tagged tests — and building after an e2e run can never
+  resurrect e2e entries (verified 2026-10-14). Removing a tag leaves a stale
+  manifest entry behind (merge never deletes) — prune manually.
+- describe-aware `title`/`feature`/`id` (project suite excluded);
+- `workflow` + `order` annotations → flow membership and position.
 
-`scripts/build-manifest.js`: schema `v: 2`, additive fields:
+`scripts/build-manifest.js`: schema `v: 3`:
 
 ```json
 {
-  "v": 2,
-  "id": "cart-update-quantity",
-  "title": "Update quantity",
+  "v": 3,
+  "id": "cart-cart-summary-update-quantity",
+  "title": "Cart summary › update quantity",
+  "feature": "Cart summary",
   "file": "tests/functional/cart/cart.spec.ts",
-  "video": "library/videos/cart-update-quantity.webm",
+  "video": "library/videos/cart-cart-summary-update-quantity.webm",
   "clip": true,
-  "durationMs": 15000,
-  "useContext": ["cart-help"],
-  "playlists": ["checkout-story"],
-  "playlistOrder": 3,
+  "durationMs": 4000,
+  "workflows": ["new order"],
+  "playlistOrder": 4,
   "summary": "AI 3 bullets…",
   "tags": ["cart", "quantity"],
   "searchText": "…"
 }
 ```
 
-Notes: `clip: true` + `durationMs` let the viewer rank short answers first;
-`chapters` field dropped — with 1–3 steps per test there is nothing to chapter.
-No ffmpeg slicing: granularity comes from test boundaries, not post-processing.
+Notes: granularity comes from test boundaries, not post-processing (no ffmpeg
+slicing, no per-step files). `topic`/`useContext` taxonomy dropped 2026-10-14:
+the app folder already groups clips; flows carry reuse.
 
 `viewer/index.html` delta (no framework):
 
-- playlist filter (from `playlists`/`useContext`) alongside existing section chips;
-- "Shorts (<30s)" toggle + duration badge so how-to queries surface clips above tasks;
-- entry card shows `useContext` badges so one clip visibly serves many stories.
+- app chips (parent folder: cart / product / profile) — the only filter;
+- flows row: pre-defined flows (`new order`, `account`) stitch member clips
+  across apps, ordered by `playlistOrder`;
+- card: test name (leading `verify ` suppressed), feature line, video, steps,
+  endpoints, `recorded: <date>` footer (no badges, no `Part of` line).
 
 ## 6. S3 + promotion (future state, document now, build latest-only)
 
@@ -217,6 +232,6 @@ never presented as Playwright output.
 - [x] add `tests/setup/auth.setup.ts` + `tests/functional/profile/profile.spec.ts` (login off camera via setup project, `video: off`, filtered from manifest)
 - [x] describe-aware dashboard titles + `feature` filter (project suite excluded)
 - [x] add `tests/functional/product/product.spec.ts` (mocked `describe('Product detail summary')` + HTML fixtures, replicates product-repo pattern)
-- [x] reporter: story/topic annotations → record; manifest v2 fields (`clip`, `playlists`, `useContext`); viewer story chips + Shorts filter + badges (chapters dropped with clips model)
+- [x] opt-in `library` tag gate + `workflow`/`order` annotations; manifest v3 (`workflows`); viewer app chips + flows row (`new order`, `account`)
 - [ ] S3 paths → `latest/` + `releases/`; lifecycle 30d; document promotion
 - [ ] record `update quantity` clip, mock search/add/pay manifest entries for pitch

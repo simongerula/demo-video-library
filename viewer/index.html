@@ -10,9 +10,10 @@
     header h1 { margin: 0 0 8px; font-size: 20px; }
     #q { width: 100%; max-width: 480px; padding: 8px 12px; font-size: 15px; border-radius: 6px; border: 1px solid #ccc; }
     #count { margin-top: 8px; font-size: 13px; color: #bbb; }
-    #chips { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
-    #chips button { padding: 6px 12px; font-size: 13px; border-radius: 20px; border: 1px solid #555; background: transparent; color: #fff; cursor: pointer; }
-    #chips button[aria-pressed="true"] { background: #fff; color: #111; border-color: #fff; }
+    #chips, #flows { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+    #chips button, #flows button { padding: 6px 12px; font-size: 13px; border-radius: 20px; border: 1px solid #555; background: transparent; color: #fff; cursor: pointer; }
+    #chips button[aria-pressed="true"], #flows button[aria-pressed="true"] { background: #fff; color: #111; border-color: #fff; }
+    #flows:empty { display: none; }
     main { padding: 24px; display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); }
     article { background: #fff; border-radius: 10px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
     article h2 { margin: 0 0 2px; font-size: 17px; }
@@ -29,6 +30,7 @@
     <h1>E2E Video Library</h1>
     <input id="q" type="search" placeholder="Search flows… e.g. quantity" autocomplete="off" />
     <div id="chips"></div>
+    <div id="flows"></div>
     <div id="count"></div>
   </header>
   <main id="list"></main>
@@ -38,8 +40,10 @@
     const q = document.getElementById('q');
     const count = document.getElementById('count');
     const chips = document.getElementById('chips');
+    const flowsEl = document.getElementById('flows');
     let entries = [];
     let activeApp = 'all';
+    let activeFlow = 'all';
 
     // App = immediate parent folder of the spec
     // ("tests/functional/cart/cart.spec.ts" -> "cart").
@@ -59,9 +63,14 @@
       return stripped || raw;
     }
 
-    // Reuse tags (playlists + useContext) stay searchable, just not filters.
+    // Reuse tags stay searchable: workflows (current) plus legacy playlists/topics.
     function tagsOf(e) {
-      return [...(e.playlists || []), ...(e.useContext || [])];
+      return [...(e.workflows || []), ...(e.playlists || []), ...(e.useContext || [])];
+    }
+
+    // Pre-defined flows stitch clips across apps (e.g. "new order").
+    function flowsOf(e) {
+      return e.workflows || [];
     }
 
     function formatDuration(ms) {
@@ -98,13 +107,38 @@
         apps.map((s) => btn(s, `${s} (${counts[s]})`)).join('');
     }
 
+    function renderFlows() {
+      const counts = {};
+      for (const e of entries) {
+        for (const w of flowsOf(e)) counts[w] = (counts[w] || 0) + 1;
+      }
+      const flows = Object.keys(counts).sort();
+      if (!flows.length) { flowsEl.innerHTML = ''; return; }
+      const btn = (value, label) =>
+        `<button data-flow="${escapeAttr(value)}" aria-pressed="${value === activeFlow}">${escapeHtml(label)}</button>`;
+      flowsEl.innerHTML =
+        btn('all', `All flows (${entries.length})`) +
+        flows.map((s) => btn(s, `${s} (${counts[s]})`)).join('');
+    }
+
+    function flowOrder(e) {
+      return e.playlistOrder ?? Number.MAX_SAFE_INTEGER;
+    }
+
     function render(filter = '') {
       const f = filter.trim().toLowerCase();
-      const shown = entries.filter(
-        (e) =>
-          (activeApp === 'all' || appOf(e) === activeApp) &&
-          (!f || searchable(e).includes(f)),
-      );
+      const shown = entries
+        .filter(
+          (e) =>
+            (activeApp === 'all' || appOf(e) === activeApp) &&
+            (activeFlow === 'all' || flowsOf(e).includes(activeFlow)) &&
+            (!f || searchable(e).includes(f)),
+        )
+        .sort((a, b) =>
+          activeFlow === 'all'
+            ? 0
+            : flowOrder(a) - flowOrder(b) || a.title.localeCompare(b.title),
+        );
       count.textContent = `${shown.length} of ${entries.length} flows`;
       list.innerHTML = shown.map((e) => `
         <article>
@@ -138,9 +172,17 @@
       render(q.value);
     });
 
+    flowsEl.addEventListener('click', (ev) => {
+      const btn = ev.target.closest('button[data-flow]');
+      if (!btn) return;
+      activeFlow = btn.dataset.flow;
+      renderFlows();
+      render(q.value);
+    });
+
     fetch('../library/manifest.json')
       .then((r) => { if (!r.ok) throw new Error('manifest not found'); return r.json(); })
-      .then((data) => { entries = data; renderChips(); render(q.value); })
+      .then((data) => { entries = data; renderChips(); renderFlows(); render(q.value); })
       .catch((err) => { list.innerHTML = `<div class="error">Could not load ../library/manifest.json — serve the repo over http (e.g. npx serve .) instead of file://. (${escapeHtml(err.message)})</div>`; });
   </script>
 </body>

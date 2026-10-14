@@ -15,8 +15,9 @@ test.describe('Cart summary', () => {
     'add Blue Top to cart',
     {
       annotation: [
-        { type: 'story', description: 'checkout-story' },
-        { type: 'topic', description: 'cart-help' },
+        { type: 'library' },
+        { type: 'workflow', description: 'new order' },
+        { type: 'order', description: '3' },
       ],
     },
     async ({ page }) => {
@@ -45,8 +46,9 @@ test.describe('Cart summary', () => {
     'update quantity',
     {
       annotation: [
-        { type: 'story', description: 'checkout-story' },
-        { type: 'topic', description: 'cart-help' },
+        { type: 'library' },
+        { type: 'workflow', description: 'new order' },
+        { type: 'order', description: '4' },
       ],
     },
     async ({ page }) => {
@@ -75,7 +77,7 @@ test.describe('Cart summary', () => {
 
   test(
     'remove item from cart',
-    { annotation: [{ type: 'topic', description: 'cart-help' }] },
+    { annotation: [{ type: 'library' }] },
     async ({ page }) => {
     let getEndpoints: () => TrackedEndpoint[] = () => [];
 

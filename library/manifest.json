@@ -1,21 +1,18 @@
 [
   {
-    "v": 2,
+    "v": 3,
     "id": "cart-cart-summary-add-blue-top-to-cart",
     "title": "Cart summary › add Blue Top to cart",
     "file": "tests/functional/cart/cart.spec.ts",
     "video": "library/videos/cart-cart-summary-add-blue-top-to-cart.webm",
     "status": "passed",
-    "durationMs": 5180,
+    "durationMs": 3906,
     "clip": true,
     "feature": "Cart summary",
-    "playlists": [
-      "checkout-story"
+    "workflows": [
+      "new order"
     ],
-    "useContext": [
-      "cart-help"
-    ],
-    "playlistOrder": null,
+    "playlistOrder": 3,
     "steps": [
       "Open products and add Blue Top",
       "Verify cart contains Blue Top"
@@ -36,24 +33,21 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-14T01:23:53.357Z",
+    "updatedAt": "2026-10-14T01:35:52.785Z",
     "commit": null,
     "runUrl": null
   },
   {
-    "v": 2,
+    "v": 3,
     "id": "cart-cart-summary-remove-item-from-cart",
     "title": "Cart summary › remove item from cart",
     "file": "tests/functional/cart/cart.spec.ts",
     "video": "library/videos/cart-cart-summary-remove-item-from-cart.webm",
     "status": "passed",
-    "durationMs": 7395,
+    "durationMs": 5150,
     "clip": true,
     "feature": "Cart summary",
-    "playlists": [],
-    "useContext": [
-      "cart-help"
-    ],
+    "workflows": [],
     "playlistOrder": null,
     "steps": [
       "Add Blue Top to cart",
@@ -79,27 +73,24 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-14T01:23:53.360Z",
+    "updatedAt": "2026-10-14T01:35:52.786Z",
     "commit": null,
     "runUrl": null
   },
   {
-    "v": 2,
+    "v": 3,
     "id": "cart-cart-summary-update-quantity",
     "title": "Cart summary › update quantity",
     "file": "tests/functional/cart/cart.spec.ts",
     "video": "library/videos/cart-cart-summary-update-quantity.webm",
     "status": "passed",
-    "durationMs": 5367,
+    "durationMs": 4605,
     "clip": true,
     "feature": "Cart summary",
-    "playlists": [
-      "checkout-story"
+    "workflows": [
+      "new order"
     ],
-    "useContext": [
-      "cart-help"
-    ],
-    "playlistOrder": null,
+    "playlistOrder": 4,
     "steps": [
       "Set quantity to 2 on Blue Top details",
       "Verify cart shows quantity 2"
@@ -120,27 +111,24 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-14T01:23:53.361Z",
+    "updatedAt": "2026-10-14T01:35:52.787Z",
     "commit": null,
     "runUrl": null
   },
   {
-    "v": 2,
+    "v": 3,
     "id": "product-product-detail-summary-verify-add-to-cart-button",
     "title": "Product detail summary › verify add to cart button",
     "file": "tests/functional/product/product.spec.ts",
     "video": "library/videos/product-product-detail-summary-verify-add-to-cart-button.webm",
     "status": "passed",
-    "durationMs": 2535,
+    "durationMs": 2079,
     "clip": true,
     "feature": "Product detail summary",
-    "playlists": [
-      "checkout-story"
+    "workflows": [
+      "new order"
     ],
-    "useContext": [
-      "product-help"
-    ],
-    "playlistOrder": null,
+    "playlistOrder": 2,
     "steps": [
       "Open Blue Top details from mock",
       "Add to cart from mocked details"
@@ -157,25 +145,24 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-14T01:23:53.362Z",
+    "updatedAt": "2026-10-14T01:35:52.787Z",
     "commit": null,
     "runUrl": null
   },
   {
-    "v": 2,
+    "v": 3,
     "id": "product-product-detail-summary-verify-item-details-displayed",
     "title": "Product detail summary › verify item details displayed",
     "file": "tests/functional/product/product.spec.ts",
     "video": "library/videos/product-product-detail-summary-verify-item-details-displayed.webm",
     "status": "passed",
-    "durationMs": 1508,
+    "durationMs": 1295,
     "clip": true,
     "feature": "Product detail summary",
-    "playlists": [],
-    "useContext": [
-      "product-help"
+    "workflows": [
+      "new order"
     ],
-    "playlistOrder": null,
+    "playlistOrder": 1,
     "steps": [
       "Open Blue Top details from mock",
       "Verify price and stock details"
@@ -188,24 +175,21 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-14T01:23:53.363Z",
+    "updatedAt": "2026-10-14T01:35:52.787Z",
     "commit": null,
     "runUrl": null
   },
   {
-    "v": 2,
+    "v": 3,
     "id": "product-product-detail-summary-verify-missing-reviews-are-displayed-empty",
     "title": "Product detail summary › verify missing reviews are displayed empty",
     "file": "tests/functional/product/product.spec.ts",
     "video": "library/videos/product-product-detail-summary-verify-missing-reviews-are-displayed-empty.webm",
     "status": "passed",
-    "durationMs": 1072,
+    "durationMs": 1171,
     "clip": true,
     "feature": "Product detail summary",
-    "playlists": [],
-    "useContext": [
-      "product-help"
-    ],
+    "workflows": [],
     "playlistOrder": null,
     "steps": [
       "Open details with base mock",
@@ -219,24 +203,21 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-14T01:23:53.364Z",
+    "updatedAt": "2026-10-14T01:35:52.787Z",
     "commit": null,
     "runUrl": null
   },
   {
-    "v": 2,
+    "v": 3,
     "id": "product-product-detail-summary-verify-reviews-are-displayed",
     "title": "Product detail summary › verify reviews are displayed",
     "file": "tests/functional/product/product.spec.ts",
     "video": "library/videos/product-product-detail-summary-verify-reviews-are-displayed.webm",
     "status": "passed",
-    "durationMs": 4475,
+    "durationMs": 4949,
     "clip": true,
     "feature": "Product detail summary",
-    "playlists": [],
-    "useContext": [
-      "product-help"
-    ],
+    "workflows": [],
     "playlistOrder": null,
     "steps": [
       "Open details with mocked reviews",
@@ -250,25 +231,24 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-14T01:23:53.364Z",
+    "updatedAt": "2026-10-14T01:35:52.789Z",
     "commit": null,
     "runUrl": null
   },
   {
-    "v": 2,
+    "v": 3,
     "id": "profile-profile-summary-logout",
     "title": "Profile summary › logout",
     "file": "tests/functional/profile/profile.spec.ts",
     "video": "library/videos/profile-profile-summary-logout.webm",
     "status": "passed",
-    "durationMs": 3835,
+    "durationMs": 3499,
     "clip": true,
     "feature": "Profile summary",
-    "playlists": [],
-    "useContext": [
-      "account-help"
+    "workflows": [
+      "account"
     ],
-    "playlistOrder": null,
+    "playlistOrder": 2,
     "steps": [
       "Open home page while logged in",
       "Log out and verify login page"
@@ -285,25 +265,24 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-14T01:23:53.364Z",
+    "updatedAt": "2026-10-14T01:35:52.789Z",
     "commit": null,
     "runUrl": null
   },
   {
-    "v": 2,
+    "v": 3,
     "id": "profile-profile-summary-verify-logged-in",
     "title": "Profile summary › verify logged in",
     "file": "tests/functional/profile/profile.spec.ts",
     "video": "library/videos/profile-profile-summary-verify-logged-in.webm",
     "status": "passed",
-    "durationMs": 1991,
+    "durationMs": 1773,
     "clip": true,
     "feature": "Profile summary",
-    "playlists": [],
-    "useContext": [
-      "account-help"
+    "workflows": [
+      "account"
     ],
-    "playlistOrder": null,
+    "playlistOrder": 1,
     "steps": [
       "Open home page while logged in",
       "Verify account links are shown"
@@ -311,7 +290,7 @@
     "endpoints": [],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-14T01:23:53.365Z",
+    "updatedAt": "2026-10-14T01:35:52.789Z",
     "commit": null,
     "runUrl": null
   }

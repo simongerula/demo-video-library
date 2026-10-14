@@ -57,7 +57,7 @@ for (const file of files) {
   }
 
   byId.set(record.id, {
-    v: 2,
+    v: 3,
     id: record.id,
     title: record.title,
     file: record.file,
@@ -66,8 +66,7 @@ for (const file of files) {
     durationMs: record.durationMs,
     clip: record.file?.startsWith('tests/functional/') ?? false,
     feature: record.feature ?? byId.get(record.id)?.feature ?? '',
-    playlists: record.playlists ?? byId.get(record.id)?.playlists ?? [],
-    useContext: record.useContext ?? byId.get(record.id)?.useContext ?? [],
+    workflows: record.workflows ?? byId.get(record.id)?.workflows ?? [],
     playlistOrder: record.playlistOrder ?? byId.get(record.id)?.playlistOrder ?? null,
     steps: record.steps ?? [],
     endpoints: record.endpoints ?? byId.get(record.id)?.endpoints ?? [],
