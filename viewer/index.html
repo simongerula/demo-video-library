@@ -122,7 +122,7 @@
     }
 
     function flowOrder(e) {
-      return e.playlistOrder ?? Number.MAX_SAFE_INTEGER;
+      return e.flowOrder?.[activeFlow] ?? Number.MAX_SAFE_INTEGER;
     }
 
     function render(filter = '') {

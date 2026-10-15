@@ -67,7 +67,7 @@ for (const file of files) {
     clip: record.file?.startsWith('tests/functional/') ?? false,
     feature: record.feature ?? byId.get(record.id)?.feature ?? '',
     workflows: record.workflows ?? byId.get(record.id)?.workflows ?? [],
-    playlistOrder: record.playlistOrder ?? byId.get(record.id)?.playlistOrder ?? null,
+    flowOrder: record.flowOrder ?? byId.get(record.id)?.flowOrder ?? {},
     steps: record.steps ?? [],
     endpoints: record.endpoints ?? byId.get(record.id)?.endpoints ?? [],
     summary: byId.get(record.id)?.summary ?? null,

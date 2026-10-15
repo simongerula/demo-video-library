@@ -1,67 +1,25 @@
 [
   {
     "v": 3,
-    "id": "cart-cart-summary-add-blue-top-to-cart",
-    "title": "Cart summary › add Blue Top to cart",
-    "file": "tests/functional/cart/cart.spec.ts",
-    "video": "library/videos/cart-cart-summary-add-blue-top-to-cart.webm",
-    "status": "passed",
-    "durationMs": 5020,
-    "clip": true,
-    "feature": "Cart summary",
-    "workflows": [
-      "new order"
-    ],
-    "playlistOrder": 3,
-    "steps": [
-      "Open products and add Blue Top",
-      "Verify cart contains Blue Top"
-    ],
-    "endpoints": [
-      {
-        "method": "GET",
-        "path": "/products"
-      },
-      {
-        "method": "GET",
-        "path": "/add_to_cart/1"
-      },
-      {
-        "method": "GET",
-        "path": "/view_cart"
-      }
-    ],
-    "summary": null,
-    "tags": [],
-    "updatedAt": "2026-10-15T00:22:56.543Z",
-    "commit": null,
-    "runUrl": null
-  },
-  {
-    "v": 3,
     "id": "cart-cart-summary-remove-item-from-cart",
     "title": "Cart summary › remove item from cart",
     "file": "tests/functional/cart/cart.spec.ts",
     "video": "library/videos/cart-cart-summary-remove-item-from-cart.webm",
     "status": "passed",
-    "durationMs": 6069,
+    "durationMs": 3204,
     "clip": true,
     "feature": "Cart summary",
-    "workflows": [],
-    "playlistOrder": null,
+    "workflows": [
+      "cancel order"
+    ],
+    "flowOrder": {
+      "cancel order": 3
+    },
     "steps": [
-      "Add Blue Top to cart",
+      "Open cart with seeded Blue Top",
       "Remove Blue Top and verify cart is empty"
     ],
     "endpoints": [
-      {
-        "method": "GET",
-        "path": "/products"
-      },
-      {
-        "method": "GET",
-        "path": "/add_to_cart/1"
-      },
       {
         "method": "GET",
         "path": "/view_cart"
@@ -73,26 +31,292 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-15T00:22:56.544Z",
+    "updatedAt": "2026-10-15T00:42:35.829Z",
     "commit": null,
     "runUrl": null
   },
   {
     "v": 3,
-    "id": "cart-cart-summary-update-quantity",
-    "title": "Cart summary › update quantity",
+    "id": "cart-cart-summary-verify-cart-details-displayed",
+    "title": "Cart summary › verify cart details displayed",
     "file": "tests/functional/cart/cart.spec.ts",
-    "video": "library/videos/cart-cart-summary-update-quantity.webm",
+    "video": "library/videos/cart-cart-summary-verify-cart-details-displayed.webm",
     "status": "passed",
-    "durationMs": 5343,
+    "durationMs": 2022,
     "clip": true,
     "feature": "Cart summary",
     "workflows": [
+      "new order",
+      "cancel order"
+    ],
+    "flowOrder": {
+      "new order": 3,
+      "cancel order": 2
+    },
+    "steps": [
+      "Open cart with seeded Blue Top",
+      "Verify price and total"
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/view_cart"
+      }
+    ],
+    "summary": null,
+    "tags": [],
+    "updatedAt": "2026-10-15T00:42:35.830Z",
+    "commit": null,
+    "runUrl": null
+  },
+  {
+    "v": 3,
+    "id": "checkout-checkout-summary-pay-with-test-card",
+    "title": "Checkout summary › pay with test card",
+    "file": "tests/functional/checkout/checkout.spec.ts",
+    "video": "library/videos/checkout-checkout-summary-pay-with-test-card.webm",
+    "status": "passed",
+    "durationMs": 7833,
+    "clip": true,
+    "feature": "Checkout summary",
+    "workflows": [
       "new order"
     ],
-    "playlistOrder": 4,
+    "flowOrder": {
+      "new order": 6
+    },
     "steps": [
-      "Set quantity to 2 on Blue Top details",
+      "Open payment page",
+      "Pay with test card and verify success"
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/payment"
+      },
+      {
+        "method": "POST",
+        "path": "/payment"
+      },
+      {
+        "method": "GET",
+        "path": "/payment_done/1500"
+      }
+    ],
+    "summary": null,
+    "tags": [],
+    "updatedAt": "2026-10-15T00:42:35.830Z",
+    "commit": null,
+    "runUrl": null
+  },
+  {
+    "v": 3,
+    "id": "checkout-checkout-summary-place-order",
+    "title": "Checkout summary › place order",
+    "file": "tests/functional/checkout/checkout.spec.ts",
+    "video": "library/videos/checkout-checkout-summary-place-order.webm",
+    "status": "passed",
+    "durationMs": 4107,
+    "clip": true,
+    "feature": "Checkout summary",
+    "workflows": [
+      "new order"
+    ],
+    "flowOrder": {
+      "new order": 5
+    },
+    "steps": [
+      "Open checkout with seeded cart",
+      "Comment and place order"
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/checkout"
+      },
+      {
+        "method": "GET",
+        "path": "/payment"
+      }
+    ],
+    "summary": null,
+    "tags": [],
+    "updatedAt": "2026-10-15T00:42:35.830Z",
+    "commit": null,
+    "runUrl": null
+  },
+  {
+    "v": 3,
+    "id": "checkout-checkout-summary-verify-address-details",
+    "title": "Checkout summary › verify address details",
+    "file": "tests/functional/checkout/checkout.spec.ts",
+    "video": "library/videos/checkout-checkout-summary-verify-address-details.webm",
+    "status": "passed",
+    "durationMs": 2062,
+    "clip": true,
+    "feature": "Checkout summary",
+    "workflows": [
+      "new order"
+    ],
+    "flowOrder": {
+      "new order": 4
+    },
+    "steps": [
+      "Open checkout with seeded cart",
+      "Verify delivery address and order review"
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/checkout"
+      }
+    ],
+    "summary": null,
+    "tags": [],
+    "updatedAt": "2026-10-15T00:42:35.830Z",
+    "commit": null,
+    "runUrl": null
+  },
+  {
+    "v": 3,
+    "id": "product-product-detail-summary-verify-add-to-cart-button",
+    "title": "Product detail summary › verify add to cart button",
+    "file": "tests/functional/product/product.spec.ts",
+    "video": "library/videos/product-product-detail-summary-verify-add-to-cart-button.webm",
+    "status": "passed",
+    "durationMs": 2099,
+    "clip": true,
+    "feature": "Product detail summary",
+    "workflows": [
+      "new order",
+      "cancel order"
+    ],
+    "flowOrder": {
+      "new order": 2,
+      "cancel order": 1
+    },
+    "steps": [
+      "Open Blue Top details from mock",
+      "Add to cart from mocked details"
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/product_details/1"
+      },
+      {
+        "method": "GET",
+        "path": "/add_to_cart/1"
+      }
+    ],
+    "summary": null,
+    "tags": [],
+    "updatedAt": "2026-10-15T00:42:35.831Z",
+    "commit": null,
+    "runUrl": null
+  },
+  {
+    "v": 3,
+    "id": "product-product-detail-summary-verify-item-details-displayed",
+    "title": "Product detail summary › verify item details displayed",
+    "file": "tests/functional/product/product.spec.ts",
+    "video": "library/videos/product-product-detail-summary-verify-item-details-displayed.webm",
+    "status": "passed",
+    "durationMs": 1020,
+    "clip": true,
+    "feature": "Product detail summary",
+    "workflows": [
+      "new order"
+    ],
+    "flowOrder": {
+      "new order": 1
+    },
+    "steps": [
+      "Open Blue Top details from mock",
+      "Verify price and stock details"
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/product_details/1"
+      }
+    ],
+    "summary": null,
+    "tags": [],
+    "updatedAt": "2026-10-15T00:42:35.831Z",
+    "commit": null,
+    "runUrl": null
+  },
+  {
+    "v": 3,
+    "id": "product-product-detail-summary-verify-missing-reviews-are-displayed-empty",
+    "title": "Product detail summary › verify missing reviews are displayed empty",
+    "file": "tests/functional/product/product.spec.ts",
+    "video": "library/videos/product-product-detail-summary-verify-missing-reviews-are-displayed-empty.webm",
+    "status": "passed",
+    "durationMs": 996,
+    "clip": true,
+    "feature": "Product detail summary",
+    "workflows": [],
+    "flowOrder": {},
+    "steps": [
+      "Open details with base mock",
+      "Verify empty reviews state"
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/product_details/1"
+      }
+    ],
+    "summary": null,
+    "tags": [],
+    "updatedAt": "2026-10-15T00:42:35.831Z",
+    "commit": null,
+    "runUrl": null
+  },
+  {
+    "v": 3,
+    "id": "product-product-detail-summary-verify-reviews-are-displayed",
+    "title": "Product detail summary › verify reviews are displayed",
+    "file": "tests/functional/product/product.spec.ts",
+    "video": "library/videos/product-product-detail-summary-verify-reviews-are-displayed.webm",
+    "status": "passed",
+    "durationMs": 4801,
+    "clip": true,
+    "feature": "Product detail summary",
+    "workflows": [],
+    "flowOrder": {},
+    "steps": [
+      "Open details with mocked reviews",
+      "Verify mocked reviews render"
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/product_details/1"
+      }
+    ],
+    "summary": null,
+    "tags": [],
+    "updatedAt": "2026-10-15T00:42:35.832Z",
+    "commit": null,
+    "runUrl": null
+  },
+  {
+    "v": 3,
+    "id": "product-product-detail-summary-verify-update-quantity",
+    "title": "Product detail summary › verify update quantity",
+    "file": "tests/functional/product/product.spec.ts",
+    "video": "library/videos/product-product-detail-summary-verify-update-quantity.webm",
+    "status": "passed",
+    "durationMs": 4197,
+    "clip": true,
+    "feature": "Product detail summary",
+    "workflows": [],
+    "flowOrder": {},
+    "steps": [
+      "Set quantity to 2 on mocked details",
       "Verify cart shows quantity 2"
     ],
     "endpoints": [
@@ -111,127 +335,7 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-15T00:22:56.544Z",
-    "commit": null,
-    "runUrl": null
-  },
-  {
-    "v": 3,
-    "id": "product-product-detail-summary-verify-add-to-cart-button",
-    "title": "Product detail summary › verify add to cart button",
-    "file": "tests/functional/product/product.spec.ts",
-    "video": "library/videos/product-product-detail-summary-verify-add-to-cart-button.webm",
-    "status": "passed",
-    "durationMs": 2266,
-    "clip": true,
-    "feature": "Product detail summary",
-    "workflows": [
-      "new order"
-    ],
-    "playlistOrder": 2,
-    "steps": [
-      "Open Blue Top details from mock",
-      "Add to cart from mocked details"
-    ],
-    "endpoints": [
-      {
-        "method": "GET",
-        "path": "/product_details/1"
-      },
-      {
-        "method": "GET",
-        "path": "/add_to_cart/1"
-      }
-    ],
-    "summary": null,
-    "tags": [],
-    "updatedAt": "2026-10-15T00:22:56.545Z",
-    "commit": null,
-    "runUrl": null
-  },
-  {
-    "v": 3,
-    "id": "product-product-detail-summary-verify-item-details-displayed",
-    "title": "Product detail summary › verify item details displayed",
-    "file": "tests/functional/product/product.spec.ts",
-    "video": "library/videos/product-product-detail-summary-verify-item-details-displayed.webm",
-    "status": "passed",
-    "durationMs": 1309,
-    "clip": true,
-    "feature": "Product detail summary",
-    "workflows": [
-      "new order"
-    ],
-    "playlistOrder": 1,
-    "steps": [
-      "Open Blue Top details from mock",
-      "Verify price and stock details"
-    ],
-    "endpoints": [
-      {
-        "method": "GET",
-        "path": "/product_details/1"
-      }
-    ],
-    "summary": null,
-    "tags": [],
-    "updatedAt": "2026-10-15T00:22:56.546Z",
-    "commit": null,
-    "runUrl": null
-  },
-  {
-    "v": 3,
-    "id": "product-product-detail-summary-verify-missing-reviews-are-displayed-empty",
-    "title": "Product detail summary › verify missing reviews are displayed empty",
-    "file": "tests/functional/product/product.spec.ts",
-    "video": "library/videos/product-product-detail-summary-verify-missing-reviews-are-displayed-empty.webm",
-    "status": "passed",
-    "durationMs": 994,
-    "clip": true,
-    "feature": "Product detail summary",
-    "workflows": [],
-    "playlistOrder": null,
-    "steps": [
-      "Open details with base mock",
-      "Verify empty reviews state"
-    ],
-    "endpoints": [
-      {
-        "method": "GET",
-        "path": "/product_details/1"
-      }
-    ],
-    "summary": null,
-    "tags": [],
-    "updatedAt": "2026-10-15T00:22:56.547Z",
-    "commit": null,
-    "runUrl": null
-  },
-  {
-    "v": 3,
-    "id": "product-product-detail-summary-verify-reviews-are-displayed",
-    "title": "Product detail summary › verify reviews are displayed",
-    "file": "tests/functional/product/product.spec.ts",
-    "video": "library/videos/product-product-detail-summary-verify-reviews-are-displayed.webm",
-    "status": "passed",
-    "durationMs": 4454,
-    "clip": true,
-    "feature": "Product detail summary",
-    "workflows": [],
-    "playlistOrder": null,
-    "steps": [
-      "Open details with mocked reviews",
-      "Verify mocked reviews render"
-    ],
-    "endpoints": [
-      {
-        "method": "GET",
-        "path": "/product_details/1"
-      }
-    ],
-    "summary": null,
-    "tags": [],
-    "updatedAt": "2026-10-15T00:22:56.547Z",
+    "updatedAt": "2026-10-15T00:42:35.832Z",
     "commit": null,
     "runUrl": null
   },
@@ -242,13 +346,15 @@
     "file": "tests/functional/profile/profile.spec.ts",
     "video": "library/videos/profile-profile-summary-logout.webm",
     "status": "passed",
-    "durationMs": 8416,
+    "durationMs": 7788,
     "clip": true,
     "feature": "Profile summary",
     "workflows": [
       "account"
     ],
-    "playlistOrder": 2,
+    "flowOrder": {
+      "account": 2
+    },
     "steps": [
       "Open home page while logged in",
       "Log out and verify login page"
@@ -265,7 +371,7 @@
     ],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-15T00:22:56.548Z",
+    "updatedAt": "2026-10-15T00:42:35.833Z",
     "commit": null,
     "runUrl": null
   },
@@ -276,13 +382,15 @@
     "file": "tests/functional/profile/profile.spec.ts",
     "video": "library/videos/profile-profile-summary-verify-logged-in.webm",
     "status": "passed",
-    "durationMs": 1849,
+    "durationMs": 1776,
     "clip": true,
     "feature": "Profile summary",
     "workflows": [
       "account"
     ],
-    "playlistOrder": 1,
+    "flowOrder": {
+      "account": 1
+    },
     "steps": [
       "Open home page while logged in",
       "Verify account links are shown"
@@ -290,7 +398,7 @@
     "endpoints": [],
     "summary": null,
     "tags": [],
-    "updatedAt": "2026-10-15T00:22:56.549Z",
+    "updatedAt": "2026-10-15T00:42:35.834Z",
     "commit": null,
     "runUrl": null
   }

@@ -22,7 +22,7 @@ test.describe('Profile summary', () => {
       annotation: [
         { type: 'library' },
         { type: 'workflow', description: 'account' },
-        { type: 'order', description: '1' },
+        { type: 'order', description: 'account:1' },
       ],
     },
     async ({ page }) => {
@@ -50,7 +50,7 @@ test.describe('Profile summary', () => {
       annotation: [
         { type: 'library' },
         { type: 'workflow', description: 'account' },
-        { type: 'order', description: '2' },
+        { type: 'order', description: 'account:2' },
       ],
     },
     async ({ page }) => {

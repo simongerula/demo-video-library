@@ -35,7 +35,7 @@ test.describe('Product detail summary', () => {
       annotation: [
         { type: 'library' },
         { type: 'workflow', description: 'new order' },
-        { type: 'order', description: '1' },
+        { type: 'order', description: 'new order:1' },
       ],
     },
     async ({ page }) => {
@@ -65,7 +65,9 @@ test.describe('Product detail summary', () => {
       annotation: [
         { type: 'library' },
         { type: 'workflow', description: 'new order' },
-        { type: 'order', description: '2' },
+        { type: 'order', description: 'new order:2' },
+        { type: 'workflow', description: 'cancel order' },
+        { type: 'order', description: 'cancel order:1' },
       ],
     },
     async ({ page }) => {
@@ -80,6 +82,34 @@ test.describe('Product detail summary', () => {
       await test.step('Add to cart from mocked details', async () => {
         await page.getByRole('button', { name: /add to cart/i }).click();
         await expect(page.getByText('Added!')).toBeVisible();
+        await test.info().attach('endpoints', {
+          body: JSON.stringify(getEndpoints()),
+          contentType: 'application/json',
+        });
+      });
+    },
+  );
+
+  test(
+    'verify update quantity',
+    { annotation: [{ type: 'library' }] },
+    async ({ page }) => {
+      let getEndpoints: () => TrackedEndpoint[] = () => [];
+
+      await test.step('Set quantity to 2 on mocked details', async () => {
+        getEndpoints = trackEndpoints(page);
+        await page.goto('/product_details/1');
+        await expect(page.locator('#quantity')).toBeVisible();
+        await page.locator('#quantity').fill('2');
+        await page.getByRole('button', { name: /add to cart/i }).click();
+        await expect(page.getByText('Added!')).toBeVisible();
+      });
+
+      await test.step('Verify cart shows quantity 2', async () => {
+        await page.getByRole('link', { name: /view cart/i }).click();
+        await expect(page).toHaveURL(/view_cart/);
+        const row = page.locator('#cart_info tr', { hasText: 'Blue Top' });
+        await expect(row).toContainText('2');
         await test.info().attach('endpoints', {
           body: JSON.stringify(getEndpoints()),
           contentType: 'application/json',

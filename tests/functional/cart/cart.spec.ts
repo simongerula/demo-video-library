@@ -2,72 +2,39 @@ import { test, expect } from '@playwright/test';
 import { blockAds } from '../../helpers/ads';
 import { trackEndpoints, type TrackedEndpoint } from '../../helpers/network';
 
-// Functional clips for the cart page: one file, one test per clip.
-// Each test is guest-mode (no login), starts in place, and stays <30s on camera.
-// Cleanup is navigation only (clear cart), never account deletion.
+// Functional clips for the cart page: every clip opens on /view_cart.
+// The cart is seeded invisibly via API in beforeEach (no navigation, so the
+// video starts on the cart page) — each test gets a fresh seeded context.
 
 test.describe('Cart summary', () => {
   test.beforeEach(async ({ page }) => {
     await blockAds(page);
+    await page.request.get('/add_to_cart/1');
   });
 
   test(
-    'add Blue Top to cart',
+    'verify cart details displayed',
     {
       annotation: [
         { type: 'library' },
         { type: 'workflow', description: 'new order' },
-        { type: 'order', description: '3' },
+        { type: 'order', description: 'new order:3' },
+        { type: 'workflow', description: 'cancel order' },
+        { type: 'order', description: 'cancel order:2' },
       ],
     },
     async ({ page }) => {
     let getEndpoints: () => TrackedEndpoint[] = () => [];
 
-    await test.step('Open products and add Blue Top', async () => {
+    await test.step('Open cart with seeded Blue Top', async () => {
       getEndpoints = trackEndpoints(page);
-      await page.goto('/products');
-      await expect(page.getByText('All Products')).toBeVisible();
-      await page.locator('.productinfo a[data-product-id="1"]').first().click();
-      await expect(page.getByText('Added!')).toBeVisible();
-    });
-
-    await test.step('Verify cart contains Blue Top', async () => {
-      await page.getByRole('link', { name: /view cart/i }).click();
-      await expect(page).toHaveURL(/view_cart/);
+      await page.goto('/view_cart');
       await expect(page.locator('#cart_info')).toContainText('Blue Top');
-      await test.info().attach('endpoints', {
-        body: JSON.stringify(getEndpoints()),
-        contentType: 'application/json',
-      });
-    });
-  });
-
-  test(
-    'update quantity',
-    {
-      annotation: [
-        { type: 'library' },
-        { type: 'workflow', description: 'new order' },
-        { type: 'order', description: '4' },
-      ],
-    },
-    async ({ page }) => {
-    let getEndpoints: () => TrackedEndpoint[] = () => [];
-
-    await test.step('Set quantity to 2 on Blue Top details', async () => {
-      getEndpoints = trackEndpoints(page);
-      await page.goto('/product_details/1');
-      await expect(page.locator('#quantity')).toBeVisible();
-      await page.locator('#quantity').fill('2');
-      await page.getByRole('button', { name: /add to cart/i }).click();
-      await expect(page.getByText('Added!')).toBeVisible();
     });
 
-    await test.step('Verify cart shows quantity 2', async () => {
-      await page.getByRole('link', { name: /view cart/i }).click();
-      await expect(page).toHaveURL(/view_cart/);
+    await test.step('Verify price and total', async () => {
       const row = page.locator('#cart_info tr', { hasText: 'Blue Top' });
-      await expect(row).toContainText('2');
+      await expect(row).toContainText('Rs. 500');
       await test.info().attach('endpoints', {
         body: JSON.stringify(getEndpoints()),
         contentType: 'application/json',
@@ -77,18 +44,19 @@ test.describe('Cart summary', () => {
 
   test(
     'remove item from cart',
-    { annotation: [{ type: 'library' }] },
+    {
+      annotation: [
+        { type: 'library' },
+        { type: 'workflow', description: 'cancel order' },
+        { type: 'order', description: 'cancel order:3' },
+      ],
+    },
     async ({ page }) => {
     let getEndpoints: () => TrackedEndpoint[] = () => [];
 
-    await test.step('Add Blue Top to cart', async () => {
+    await test.step('Open cart with seeded Blue Top', async () => {
       getEndpoints = trackEndpoints(page);
-      await page.goto('/products');
-      await expect(page.getByText('All Products')).toBeVisible();
-      await page.locator('.productinfo a[data-product-id="1"]').first().click();
-      await expect(page.getByText('Added!')).toBeVisible();
-      await page.getByRole('link', { name: /view cart/i }).click();
-      await expect(page).toHaveURL(/view_cart/);
+      await page.goto('/view_cart');
       await expect(page.locator('#cart_info')).toContainText('Blue Top');
     });
 

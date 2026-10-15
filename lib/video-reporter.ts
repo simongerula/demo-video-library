@@ -97,8 +97,18 @@ class VideoReporter implements Reporter {
     const workflows = annotations
       .filter((a) => a.type === 'workflow')
       .map((a) => a.description);
-    const orderRaw = annotations.find((a) => a.type === 'order')?.description;
-    const orderParsed = orderRaw !== undefined ? Number.parseInt(orderRaw, 10) : NaN;
+    // Position within a flow: `{ type: 'order', description: '<flow>:<n>' }.
+    // A plain number applies to every workflow the test belongs to.
+    const flowOrder: Record<string, number> = {};
+    for (const a of annotations) {
+      if (a.type !== 'order') continue;
+      const scoped = /^(.*?)\s*:\s*(\d+)$/.exec(a.description ?? '');
+      if (scoped) {
+        flowOrder[scoped[1]] = Number.parseInt(scoped[2], 10);
+      } else if (/^\d+$/.test(a.description ?? '')) {
+        for (const w of workflows) flowOrder[w] = Number.parseInt(a.description, 10);
+      }
+    }
 
     const videoAttachment = result.attachments.find(
       (a) => a.name === 'video' || a.contentType?.startsWith('video'),
@@ -139,7 +149,7 @@ class VideoReporter implements Reporter {
       stepDetails: steps,
       endpoints,
       workflows,
-      playlistOrder: Number.isNaN(orderParsed) ? null : orderParsed,
+      flowOrder,
       videoPath: videoAttachment?.path ?? null,
     };
 
