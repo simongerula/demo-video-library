@@ -115,26 +115,24 @@ Video size guard: `video: { mode: 'on', size: { width: 1280, height: 720 } }`, k
 
 Two workflows to avoid slowing normal PRs:
 
-### a) `e2e.yml` — existing flow, unchanged
-- on: pull_request, push to main
-- runs full suite, `video: retain-on-failure`
-- no upload to library
+### a) `e2e.yml` — merge pipeline, correctness only
+- on: push to main
+- runs `tests/e2e`, no video publish, no manifest, no S3
 
-### b) `video-library.yml` — new
-- on:
-  ```yaml
-   push:
-     branches: [main]
-     paths: ['tests/functional/**', 'tests/helpers/**', 'playwright.config.ts']
-  workflow_dispatch:
-  ```
+### b) `video-library.yml` — manual post-merge capture
+- on: `workflow_dispatch` only (Run button; optional `prune` flag)
 - jobs:
-  1. detect-changed-specs (dorny/paths-filter or git diff)
-  2. run-playwright `--reporter=./lib/video-reporter.ts` with `video: on`
-  3. `node scripts/summarize-with-copilot.js`
-  4. `aws s3 sync library/ s3://<bucket>/`
-  5. `node scripts/notify-slack.js` (only if new/updated entries)
-  6. invalidate CloudFront (if used)
+  1. run `test:library` (`tests/functional`, `video: on`)
+  2. save pre-capture manifest copy
+  3. `node scripts/build-manifest.js`
+  4. `node scripts/check-manifest.js --before … --after …` → reports
+     NEW (tagged test, no entry) / UPDATED (steps or video changed) /
+     REMOVED (entry with no tagged test); `--prune` deletes the removed
+     (refuses when the capture produced no records). Fails the run while
+     removals are pending without prune.
+  5. `aws s3 sync library/ s3://<bucket>/`
+  6. `node scripts/notify-slack.js` (only if new/updated entries)
+  7. invalidate CloudFront (if used)
 
 Needs `GH_TOKEN` with Copilot access + Copilot CLI on runner, and AWS OIDC role (no long-lived keys).
 

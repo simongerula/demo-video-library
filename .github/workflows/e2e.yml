@@ -1,0 +1,35 @@
+name: e2e
+
+# Merge pipeline: runs the correctness suite only.
+# Video-library capture is a separate manual workflow (video-library.yml).
+
+on:
+  push:
+    branches: [master, main]
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm exec playwright install chromium --with-deps
+
+      - name: Run e2e suite (no video publish)
+        run: pnpm exec playwright test tests/e2e
+        env:
+          CI: true
