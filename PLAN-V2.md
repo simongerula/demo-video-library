@@ -59,9 +59,10 @@ The reviewer's domain example (Job Uploaded → Quoting → Review → Confirm) 
 
 | File | Tests (each = one clip) | Starts at | In workflows |
 |------|-------------------------|-------------|--------------|
-| `tests/functional/cart/cart.spec.ts` (`describe('Cart summary')`) | add Blue Top to cart; **update quantity**; remove item | `/products` or `/view_cart` with 1 item, guest | new order (add, update) |
-| `tests/functional/profile/profile.spec.ts` (`describe('Profile summary')`) | verify logged in; logout | `/` (logged in via setup state) | account |
-| `tests/functional/product/product.spec.ts` (`describe('Product detail summary')`) | verify item details; verify add to cart button; verify reviews; verify empty reviews | `/product_details/1` (document mocked, rest live) | new order (details, add) |
+| `tests/functional/cart/cart.spec.ts` (`describe('Cart summary')`) | verify cart details; remove item (cart API-seeded in `beforeEach`, every clip opens on `/view_cart`) | `new order` (details), `cancel order` (details, remove) |
+| `tests/functional/profile/profile.spec.ts` (`describe('Profile summary')`) | verify logged in; logout | `/` (logged in via setup state) | `account` |
+| `tests/functional/product/product.spec.ts` (`describe('Product detail summary')`) | verify item details; verify add to cart button; verify update quantity; verify reviews; verify empty reviews | `/product_details/1` (document mocked, rest live) | `new order` (details, add), `cancel order` (add) |
+| `tests/functional/checkout/checkout.spec.ts` (`describe('Checkout summary')`) | verify address details; place order; pay with test card | `/checkout` or `/payment` (logged in via setup state, cart API-seeded) | `new order` (address, place, pay) |
 
 Example — the "modify quantity" case is its own test, not a chapter:
 
@@ -159,8 +160,8 @@ Normal CI (`LIBRARY_RUN` unset) uses `fill()` fast path — zero slowdown.
   "video": "library/videos/cart-cart-summary-update-quantity.webm",
   "clip": true,
   "durationMs": 4000,
-  "workflows": ["new order"],
-  "playlistOrder": 4,
+  "workflows": ["new order", "cancel order"],
+  "flowOrder": { "new order": 2, "cancel order": 1 },
   "summary": "AI 3 bullets…",
   "tags": ["cart", "quantity"],
   "searchText": "…"
@@ -240,6 +241,8 @@ never presented as Playwright output.
 - [x] add `tests/setup/auth.setup.ts` + `tests/functional/profile/profile.spec.ts` (login off camera via setup project, `video: off`, filtered from manifest)
 - [x] describe-aware dashboard titles + `feature` filter (project suite excluded)
 - [x] add `tests/functional/product/product.spec.ts` (mocked `describe('Product detail summary')` + HTML fixtures, replicates product-repo pattern)
+- [x] add `tests/functional/checkout/checkout.spec.ts` (logged-in + seeded: address, place order, pay; extends `new order` flow to 6 clips)
 - [x] opt-in `library` tag gate + `workflow`/`order` annotations; manifest v3 (`workflows`); viewer app chips + flows row (`new order`, `account`)
+- [x] page-native clips (cart API-seeded, qty moved to product); two multi-page flows (`new order`, `cancel order`) with per-flow order (`flowOrder` map)
 - [ ] S3 paths → `latest/` + `releases/`; lifecycle 30d; document promotion
 - [ ] record `update quantity` clip, mock search/add/pay manifest entries for pitch
