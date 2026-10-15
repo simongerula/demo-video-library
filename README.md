@@ -42,6 +42,61 @@ The published library shows the video, `test.step` list and consumed endpoints p
 - **GitHub secrets**: `AWS_ROLE_ARN`, `DISTRIBUTION_ID`
 - **Demo site**: tests run against https://www.automationexercise.com (no account needed; tests create and delete their own users)
 
+## Infrastructure setup (AWS)
+
+One-time setup, ~20 minutes. Values below are this repo's; swap bucket/region/IDs for your own.
+
+### 1. S3 bucket (private)
+
+Create a **private** bucket with all public access blocked, e.g. `demo-video-library-simongerula` in `ap-southeast-2`. Versioning off. Expected layout (created by the sync commands, no need to hand-make prefixes):
+
+```
+s3://<bucket>/library/manifest.json
+s3://<bucket>/library/videos/<test-id>.webm
+s3://<bucket>/viewer/index.html
+s3://<bucket>/index.html
+```
+
+```bash
+aws s3 mb s3://demo-video-library-simongerula --region ap-southeast-2
+```
+
+Optional: lifecycle rule expiring old videos (see `PLAN-V2.md` §6 for the planned `latest/` + `releases/` layout with 30-day retention).
+
+### 2. CloudFront + Origin Access Control
+
+1. Create a CloudFront distribution with the bucket as origin via **Origin Access Control** (do not use public bucket + OAI).
+2. Update the bucket policy to allow the distribution (console offers this as "copy policy" when you attach the OAC — apply it).
+3. Set **Default root object** to `index.html` (repo root `index.html` redirects to `viewer/`).
+4. Note the distribution ID (e.g. `E1B3GQRGKARZ6C`) and domain for the demo URL.
+
+### 3. IAM role for GitHub OIDC (no long-lived keys)
+
+1. Ensure the `token.actions.githubusercontent.com` OIDC provider exists in IAM (thumbprint managed by AWS).
+2. Create role `e2e-video-uploader` (name it yours) with:
+   - **Trust**: `infra/github-oidc-trust.json` — replace `<AWS_ACCOUNT_ID>` and confirm the `sub`. GitHub's `sub` now embeds numeric IDs (`repo:owner@ownerId/repo@repoId:*`); old `repo:OWNER/REPO:*` examples fail with `Not authorized to perform sts:AssumeRoleWithWebIdentity`. Decode the JWT claims once if assume-role is denied.
+   - **Permissions**: `infra/s3-upload-policy.json` — `Put/Get/Delete` on `library/*`, `viewer/*`, `index.html`, `ListBucket`, plus `cloudfront:CreateInvalidation` on your distribution.
+
+### 4. GitHub secrets
+
+| Secret            | Value                                |
+| ----------------- | ------------------------------------ |
+| `AWS_ROLE_ARN`    | `arn:aws:iam::<account>:role/<role>` |
+| `DISTRIBUTION_ID` | your CloudFront distribution ID      |
+
+### 5. First deploy + verify
+
+```bash
+pnpm run test:library          # capture (tests/functional, video on)
+pnpm run build:manifest        # merge into library/manifest.json
+aws s3 sync library/ "s3://<bucket>/library/" --delete
+aws s3 sync viewer/ "s3://<bucket>/viewer/" --delete
+aws s3 cp index.html "s3://<bucket>/index.html" --content-type "text/html"
+aws cloudfront create-invalidation --distribution-id <id> --paths "/*"
+```
+
+Open `https://<distribution-domain>/viewer/index.html` — you should see the clips with video, steps, and endpoints. Afterwards, publishing is the manual `video-library` workflow (merge pipeline itself runs only `tests/e2e` via `e2e.yml`).
+
 ## Quickstart
 
 ```bash
