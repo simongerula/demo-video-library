@@ -1,19 +1,18 @@
 name: video-library
 
-# Re-runs changed functional specs with video recording and publishes to S3.
-# Normal PR checks stay in e2e.yml (if present); this workflow only runs
-# when functional tests change on the default branch.
+# Manual library capture, run post-merge from the Actions tab.
+# Compares the manifest before/after capture (new / updated / removed) and
+# publishes to S3. Merge pipeline itself runs only e2e (see e2e.yml).
 
 on:
-  push:
-    branches: [master, main]
-    paths:
-      - 'tests/functional/**'
-      - 'tests/helpers/**'
-      - 'playwright.config.ts'
-      - 'lib/video-reporter.ts'
-      - 'scripts/build-manifest.js'
   workflow_dispatch:
+    inputs:
+      prune:
+        description: 'Delete manifest entries (and videos) with no tagged test'
+        required: false
+        default: 'false'
+        type: choice
+        options: ['false', 'true']
 
 permissions:
   id-token: write
@@ -49,8 +48,14 @@ jobs:
         env:
           CI: true
 
+      - name: Save pre-capture manifest
+        run: cp library/manifest.json /tmp/manifest.before.json
+
       - name: Build manifest
         run: pnpm run build:manifest
+
+      - name: Check manifest diff (new / updated / removed)
+        run: node scripts/check-manifest.js --before /tmp/manifest.before.json --after library/manifest.json --results test-results/video-meta ${{ inputs.prune == 'true' && '--prune' || '' }}
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:

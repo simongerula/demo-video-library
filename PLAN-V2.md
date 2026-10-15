@@ -194,17 +194,25 @@ s3://<bucket>/releases/<yyyy-mm-dd>-<sha>/library/…   # archive copy
 - Promotion (review before live): capture writes to `staging/`, human approves,
   workflow copies to `latest/`. **Not built for demo** — MVP writes `latest/` directly.
 
-## 7. CI split (unchanged direction, smaller trigger)
+## 7. CI split (decided 2026-10-14: merge runs e2e only, library is manual)
 
-- `e2e.yml`: on PR, `tests/e2e/**`, `video: retain-on-failure`, no upload.
-- `video-library.yml`: on `push: main, paths: tests/functional/**` + `workflow_dispatch`,
-  runs library specs with `LIBRARY_RUN=1`, syncs `latest/` + snapshot `releases/`.
-- PR diff-check ("does this PR need video updates?") and scheduled recapture are
-  **roadmap**, not MVP. `workflow_dispatch` covers bad-video recapture.
+- `e2e.yml`: on push to main, `tests/e2e`, no publish.
+- `video-library.yml`: `workflow_dispatch` only (+ `prune` flag), runs
+  `test:library`, saves a pre-capture manifest copy, builds, then
+  `scripts/check-manifest.js` reports NEW / UPDATED / REMOVED and prunes on
+  flag (refuses on empty capture). Fails while removals pend without prune.
+  Then S3 sync as before.
 
 Spikes (timeboxed):
 
-1. **Multi-context** (1pt): test with 2 contexts → confirm reporter sees 0/2 videos → lock single-context rule.
+1. **Multi-context** — done 2026-10-14, result: a test registering user 1 on the
+   fixture page then user 2 on a manual `browser.newContext()` yields exactly
+   ONE video (user 1). Manual contexts don't inherit `recordVideo` (unlike
+   `storageState`, which is inherited — quirky asymmetry), so user 2's actions
+   are silently absent, not a second file. Rule stands: one context per library
+   test; multi-user flows become separate clips stitched by a workflow. (If both
+   contexts ever do record, the reporter takes the first video attachment and
+   drops the rest — a loud-failure guard is still open.)
 2. ~~Per-step ffmpeg slicing~~ — cancelled: test-per-clip replaces it. Remaining question is granularity (how small is too small), settled by building `cart.spec.ts` first.
 
 ## 8. MVP (2-hour prep order)
